@@ -1113,3 +1113,102 @@ footer{color:var(--casa-muted)}
 .bet-column.active-decision{z-index:20}
 .bet-column.active-decision .bet-actions{position:relative;z-index:21;pointer-events:auto}
 .bet-column.active-decision .bet-actions button{position:relative;z-index:22;pointer-events:auto;touch-action:manipulation}
+
+/* Let It Ride v16: Train table mirrors the Play table more closely.
+   The player cards sit below the felt arc, while the action area is compact
+   enough to keep New Hand close to the table action. */
+#trainPanel .train-table .player-zone{
+  margin-top:26px;
+}
+#trainPanel .train-table .bet-grid{
+  margin-top:7px;
+  margin-bottom:0;
+}
+#trainPanel .train-table .bet-column{
+  grid-template-rows:72px 50px;
+  gap:5px;
+}
+#trainPanel .train-table .bet-actions{
+  margin-top:2px;
+}
+#trainPanel .train-table .lir-message{
+  display:grid;
+  place-items:center;
+  min-height:2.1rem;
+  margin:3px auto 2px;
+}
+#trainPanel .train-table .train-next-button{
+  margin-top:0;
+}
+
+@media(max-width:520px){
+  #trainPanel .train-table .player-zone{
+    margin-top:24px;
+  }
+  #trainPanel .train-table .bet-column{
+    grid-template-rows:64px 48px;
+    gap:4px;
+  }
+  #trainPanel .train-table .bet-grid{
+    margin-top:6px;
+  }
+  #trainPanel .train-table .lir-message{
+    min-height:1.9rem;
+    margin:2px auto 1px;
+  }
+}
+
+/* Final v16 spacing pass: keep feedback readable without leaving a large
+   empty band above New Hand. */
+#trainPanel .train-table .lir-message{
+  min-height:1.6rem;
+  margin:0 auto;
+}
+@media(max-width:520px){
+  #trainPanel .train-table .lir-message{
+    min-height:1.5rem;
+    margin:0 auto;
+  }
+}
+
+/* Let It Ride v17: tighter mobile betting rail.
+   Keep the middle chip anchored beneath the middle player card while bringing
+   the outer chips inward enough that both decision buttons remain on-screen. */
+@media(max-width:520px){
+  .bet-grid{
+    width:min(306px,calc(100% - 16px));
+    gap:4px;
+  }
+  .bet-actions{
+    gap:3px;
+  }
+  .bet-actions button{
+    width:66px;
+  }
+}
+
+@media(max-width:390px){
+  .bet-grid{
+    width:min(270px,calc(100% - 12px));
+    gap:2px;
+  }
+  .bet-actions{
+    gap:2px;
+  }
+  .bet-actions button{
+    width:56px;
+    padding-inline:2px;
+    font-size:.56rem;
+  }
+}
+
+@media(max-width:340px){
+  .bet-grid{
+    width:min(246px,calc(100% - 8px));
+    gap:1px;
+  }
+  .bet-actions button{
+    width:52px;
+    font-size:.53rem;
+  }
+}
