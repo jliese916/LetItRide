@@ -1492,3 +1492,34 @@ footer{color:var(--casa-muted)}
   .masthead-crest-link{top:-43px;width:56px;height:56px}
   .bet-decision-text{margin-top:5px}
 }
+
+/* Let It Ride v23: lock the Play result area to a fixed-height slot.
+   The felt artwork uses a full-height SVG, so changing the table's content
+   height made the painted arc appear to move when the final result appeared. */
+#playPanel .play-message{
+  display:grid;
+  place-items:center;
+  width:min(560px,calc(100% - 20px));
+  height:3.45rem;
+  min-height:3.45rem;
+  margin:4px auto 3px;
+  padding:0 5px;
+  overflow:hidden;
+  font-size:.9rem;
+  line-height:1.28;
+}
+#playPanel .play-message:empty,
+#playPanel .play-message:not(:empty){
+  height:3.45rem;
+  min-height:3.45rem;
+  margin:4px auto 3px;
+}
+@media(max-width:390px){
+  #playPanel .play-message,
+  #playPanel .play-message:empty,
+  #playPanel .play-message:not(:empty){
+    height:3.7rem;
+    min-height:3.7rem;
+    font-size:.84rem;
+  }
+}

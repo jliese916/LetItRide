@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v22
+# Casa del Jefe — Let It Ride Lounge v23
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -79,3 +79,9 @@ The active Pull Back and Let It Ride controls are raised above neighboring chip 
 - Tightened the empty space between the decision controls and the Deal/New Hand button.
 - Added Enter-key support for dealing a hand in Play and starting a new hand in Train.
 - Made the masthead crest a link back to Casa del Jefe.
+
+
+## v23 update
+
+- Reserved a fixed-height result area in Play.
+- Final hand text no longer changes the table height, so the cards, chips, cream arc, and perspective lines stay perfectly still when the result appears.
