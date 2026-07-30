@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v24
+# Casa del Jefe — Let It Ride Lounge v25
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -94,3 +94,10 @@ The active Pull Back and Let It Ride controls are raised above neighboring chip 
 - Renamed the first second-decision category to “Guaranteed winners” and lists its made hands beneath it.
 - Standardized visible labels to “First Decision” and “Second Decision.”
 - Rebuilt the Lookup card layout so the plus sign is centered exactly between the adjacent cards on desktop and centered both horizontally and vertically on mobile.
+
+
+## v25 update
+
+- Shortened the lookup labels to **Player** and **Community**.
+- Enlarged and padded the lookup card container so its labels remain fully contained.
+- Raised the mobile plus sign slightly while keeping it horizontally centered.

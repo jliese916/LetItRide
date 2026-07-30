@@ -1604,3 +1604,57 @@ footer{color:var(--casa-muted)}
     line-height:1;
   }
 }
+
+
+/* Let It Ride v25: lookup labels and mobile plus alignment. */
+.lir-lookup-layout{
+  grid-template-columns:max-content 46px max-content;
+  grid-template-areas:
+    "player-label . community-label"
+    "player-hand plus community-hand";
+  column-gap:0;
+  row-gap:7px;
+  width:fit-content;
+  max-width:calc(100% - 12px);
+  padding:16px 18px 18px;
+  overflow:visible;
+}
+.lookup-player-label,
+.lookup-community-label{
+  min-width:0;
+  width:auto;
+  max-width:none;
+  padding-inline:4px;
+  white-space:nowrap;
+}
+.lookup-plus{
+  width:46px;
+}
+@media(max-width:560px){
+  .lir-lookup-layout{
+    grid-template-columns:max-content 36px max-content;
+    padding:15px 14px 17px;
+  }
+  .lookup-plus{width:36px}
+}
+@media(max-width:390px){
+  .lir-lookup-layout{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "player-label"
+      "player-hand"
+      "plus"
+      "community-label"
+      "community-hand";
+    width:min(100%,270px);
+    max-width:calc(100% - 8px);
+    padding:15px 18px 18px;
+    row-gap:7px;
+    overflow:visible;
+  }
+  .lookup-plus{
+    width:auto;
+    transform:translateY(-5px);
+    margin-bottom:-5px;
+  }
+}
