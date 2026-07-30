@@ -192,7 +192,7 @@
   }
 
   // The physical table is labeled $, 2, 1 from left to right.
-  // Decision 1 acts on the right-hand 1 wager; Decision 2 acts on the middle 2 wager.
+  // The First Decision acts on the right-hand 1 wager; the Second Decision acts on the middle 2 wager.
   function betIndexForStage(stage) {
     if (stage === 1) return 2;
     if (stage === 2) return 1;
@@ -264,12 +264,16 @@
 
     const cueText = document.createElement("span");
     cueText.className = "bet-decision-text";
-    cueText.textContent = actionsActive ? `Choose Decision ${round.stage}` : "Choose Decision";
+    cueText.textContent = actionsActive
+      ? (round.stage === 1 ? "Choose First Decision" : "Choose Second Decision")
+      : "Choose a Decision";
     cue.append(arrow, cueText);
 
     const actions = document.createElement("div");
     actions.className = "lir-decision-actions";
-    actions.setAttribute("aria-label", actionsActive ? `Decision ${round.stage} actions` : "Decision actions");
+    actions.setAttribute("aria-label", actionsActive
+      ? (round.stage === 1 ? "First Decision actions" : "Second Decision actions")
+      : "Decision actions");
     if (!actionsActive) actions.classList.add("inactive");
 
     const makeButton = (action, label, keyText) => {
@@ -659,7 +663,7 @@
     bubble.textContent = strategy.action === "indifferent" ? "EITHER" : strategy.action.toUpperCase();
     const stageLabel = document.createElement("span");
     stageLabel.className = "lookup-stage-label";
-    stageLabel.textContent = stage === 1 ? "First decision" : "Second decision";
+    stageLabel.textContent = stage === 1 ? "First Decision" : "Second Decision";
     heading.append(bubble, stageLabel);
 
     const reason = document.createElement("div");

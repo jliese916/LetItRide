@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v23
+# Casa del Jefe — Let It Ride Lounge v24
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -85,3 +85,12 @@ The active Pull Back and Let It Ride controls are raised above neighboring chip 
 
 - Reserved a fixed-height result area in Play.
 - Final hand text no longer changes the table height, so the cards, chips, cream arc, and perspective lines stay perfectly still when the result appears.
+
+
+## v24 update
+
+- Renamed the suited first-decision category to “Certain three-card straight flush draws.”
+- Uses “qualifying three-card straight flush draw” consistently in lookup explanations.
+- Renamed the first second-decision category to “Guaranteed winners” and lists its made hands beneath it.
+- Standardized visible labels to “First Decision” and “Second Decision.”
+- Rebuilt the Lookup card layout so the plus sign is centered exactly between the adjacent cards on desktop and centered both horizontally and vertically on mobile.

@@ -12,7 +12,7 @@
 <link href="./manifest.webmanifest" rel="manifest"/>
 <link href="./favicon-64.png" rel="icon" type="image/png"/>
 <link href="./apple-touch-icon.png" rel="apple-touch-icon"/>
-<link href="./styles.css?v=23" rel="stylesheet"/>
+<link href="./styles.css?v=24" rel="stylesheet"/>
 </head>
 <body>
 <main class="app">
@@ -113,15 +113,11 @@
 <section class="panel hidden" id="lookupPanel">
 <p>Enter the visible cards.</p>
 <div aria-label="Visible Let It Ride cards" class="lir-lookup-layout">
-<div class="lookup-card-group">
-<div class="picker-label">Player Cards</div>
+<div class="picker-label lookup-player-label">Player Cards</div>
+<div class="picker-label lookup-community-label">Community Card</div>
 <div aria-label="Three-card player hand" class="hand lookup-hand lookup-player-hand" id="lookupPlayerHand"></div>
-</div>
 <div aria-hidden="true" class="lookup-plus">+</div>
-<div class="lookup-card-group lookup-community-group">
-<div class="picker-label">Community Card</div>
 <div aria-label="Optional revealed community card" class="hand lookup-hand lookup-community-hand" id="lookupCommunityHand"></div>
-</div>
 </div>
 <div class="selection" id="lookupPrompt">Choose a rank for the first player card</div>
 <div class="picker-section"><div class="picker-label">Rank</div><div class="rank-picker" id="rankPicker"></div></div>
@@ -139,7 +135,7 @@
 <div class="strategy-variables">In any situation, let <strong>s</strong> be the number of different five-card straights that could be completed using all visible ranks, and let <strong>h</strong> be the number of visible cards ranked ten or higher.</div>
 </div>
 <section class="section">
-<div class="section-head"><h2>First decision · three cards</h2><div class="section-sub">Decide whether the middle bet stays in action.</div></div>
+<div class="section-head"><h2>First Decision · three cards</h2><div class="section-sub">Decide whether the first removable bet stays in action.</div></div>
 <div class="made-grid">
 <div class="made-card">
 <h3><span class="badge auto">RIDE</span> Three of a kind</h3>
@@ -151,8 +147,8 @@
 <div class="strategy-example-row"><div class="strategy-example-item"><div class="example-group"><span class="card suit-heart"><span class="card-rank">Q</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-club"><span class="card-rank">Q</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-spade"><span class="card-rank">4</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span></div></div></div>
 </div>
 <div class="made-card">
-<h3><span class="badge auto">RIDE</span> Certain triples of suited cards</h3>
-<div class="key-text">Any three cards of the same suit such that:</div>
+<h3><span class="badge auto">RIDE</span> Certain three-card straight flush draws</h3>
+<div class="key-text">Qualifying three-card straight flush draws are three cards of the same suit such that:</div>
 <div class="formula">s + h ≥ 3</div>
 <div class="strategy-example-row"><div class="strategy-example-item"><div class="example-group"><span class="card suit-spade"><span class="card-rank">7</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span><span class="card suit-spade"><span class="card-rank">8</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span><span class="card suit-spade"><span class="card-rank">9</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span></div><div class="strategy-example-caption">s = 3, h = 0</div></div><div class="strategy-example-item"><div class="example-group"><span class="card suit-heart"><span class="card-rank">9</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-heart"><span class="card-rank">10</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-heart"><span class="card-rank">J</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span></div><div class="strategy-example-caption">s = 3, h = 2</div></div><div class="strategy-example-item"><div class="example-group"><span class="card suit-club"><span class="card-rank">8</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-club"><span class="card-rank">9</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-club"><span class="card-rank">J</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span></div><div class="strategy-example-caption">s = 2, h = 1</div></div></div>
 </div>
@@ -164,12 +160,11 @@
 </div>
 </section>
 <section class="section">
-<div class="section-head"><h2>Second decision · four visible cards</h2><div class="section-sub">Decide whether the final removable bet stays in action.</div></div>
+<div class="section-head"><h2>Second Decision · four visible cards</h2><div class="section-sub">Decide whether the second removable bet stays in action.</div></div>
 <div class="made-grid">
 <div class="made-card">
-<h3><span class="badge auto">RIDE</span> Pair of tens or better, two pair, trips, or quads</h3>
-
-
+<h3><span class="badge auto">RIDE</span> Guaranteed winners</h3>
+<div class="key-text">Pair of tens or better, two pair, three of a kind, or four of a kind.</div>
 <div class="strategy-example-row"><div class="strategy-example-item"><div class="example-group"><span class="card suit-heart"><span class="card-rank">10</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-club"><span class="card-rank">10</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-spade"><span class="card-rank">4</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span><span class="card suit-diamond"><span class="card-rank">7</span><span class="card-suit card-suit-top">♦</span><span class="card-suit card-suit-bottom">♦</span></span></div><div class="strategy-example-caption">Pair of tens or better</div></div><div class="strategy-example-item"><div class="example-group"><span class="card suit-heart"><span class="card-rank">6</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-club"><span class="card-rank">6</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-spade"><span class="card-rank">K</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span><span class="card suit-diamond"><span class="card-rank">K</span><span class="card-suit card-suit-top">♦</span><span class="card-suit card-suit-bottom">♦</span></span></div><div class="strategy-example-caption">Two pair</div></div><div class="strategy-example-item"><div class="example-group"><span class="card suit-club"><span class="card-rank">8</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-diamond"><span class="card-rank">8</span><span class="card-suit card-suit-top">♦</span><span class="card-suit card-suit-bottom">♦</span></span><span class="card suit-heart"><span class="card-rank">8</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-spade"><span class="card-rank">2</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span></div><div class="strategy-example-caption">Trips</div></div><div class="strategy-example-item"><div class="example-group"><span class="card suit-heart"><span class="card-rank">A</span><span class="card-suit card-suit-top">♥</span><span class="card-suit card-suit-bottom">♥</span></span><span class="card suit-club"><span class="card-rank">A</span><span class="card-suit card-suit-top">♣</span><span class="card-suit card-suit-bottom">♣</span></span><span class="card suit-diamond"><span class="card-rank">A</span><span class="card-suit card-suit-top">♦</span><span class="card-suit card-suit-bottom">♦</span></span><span class="card suit-spade"><span class="card-rank">A</span><span class="card-suit card-suit-top">♠</span><span class="card-suit card-suit-bottom">♠</span></span></div><div class="strategy-example-caption">Quads</div></div></div></div>
 <div class="made-card">
 <h3><span class="badge auto">RIDE</span> Four-card flush</h3>
@@ -223,7 +218,7 @@
 </section>
 <footer><a class="footer-link" href="https://jliese916.github.io/"><img alt="" aria-hidden="true" src="./jefe-crest.svg"/>Return to Casa del Jefe</a></footer>
 </main>
-<script src="./strategy-engine.js?v=23"></script>
-<script defer="" src="./app.js?v=23"></script>
+<script src="./strategy-engine.js?v=24"></script>
+<script defer="" src="./app.js?v=24"></script>
 </body>
 </html>

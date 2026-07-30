@@ -1523,3 +1523,84 @@ footer{color:var(--casa-muted)}
     font-size:.84rem;
   }
 }
+
+
+/* Let It Ride v24: exact terminology and lookup-card alignment. */
+.lir-lookup-layout{
+  display:grid;
+  grid-template-columns:max-content 42px 72px;
+  grid-template-areas:
+    "player-label . community-label"
+    "player-hand plus community-hand";
+  align-items:center;
+  justify-content:center;
+  column-gap:0;
+  row-gap:6px;
+  width:fit-content;
+  max-width:100%;
+  margin-inline:auto;
+}
+.lookup-player-label{
+  grid-area:player-label;
+  justify-self:center;
+  margin-bottom:0;
+}
+.lookup-community-label{
+  grid-area:community-label;
+  justify-self:center;
+  width:max-content;
+  margin-bottom:0;
+  white-space:nowrap;
+}
+.lookup-player-hand{
+  grid-area:player-hand;
+  justify-content:center;
+}
+.lookup-community-hand{
+  grid-area:community-hand;
+  justify-content:center;
+}
+.lookup-plus{
+  grid-area:plus;
+  align-self:center;
+  justify-self:center;
+  display:grid;
+  place-items:center;
+  width:42px;
+  height:auto;
+  transform:none;
+  line-height:1;
+}
+@media(max-width:560px){
+  .lir-lookup-layout{
+    grid-template-columns:max-content 34px 51px;
+    grid-template-areas:
+      "player-label . community-label"
+      "player-hand plus community-hand";
+    column-gap:0;
+    row-gap:6px;
+  }
+  .lookup-plus{width:34px;height:auto;font-size:1.45rem}
+}
+@media(max-width:390px){
+  .lir-lookup-layout{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "player-label"
+      "player-hand"
+      "plus"
+      "community-label"
+      "community-hand";
+    justify-items:center;
+    width:100%;
+    row-gap:7px;
+  }
+  .lookup-plus{
+    width:auto;
+    height:auto;
+    transform:none;
+    align-self:center;
+    justify-self:center;
+    line-height:1;
+  }
+}

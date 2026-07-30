@@ -114,15 +114,15 @@
     if (suited && windows + highCards >= 3) {
       return {
         action: "ride",
-        reason: `These three suited cards satisfy the s + h ≥ 3 rule (s = ${windows}, h = ${highCards}).`
+        reason: `This qualifying three-card straight flush draw satisfies the s + h ≥ 3 rule (s = ${windows}, h = ${highCards}).`
       };
     }
 
     return {
       action: "pull",
       reason: suited
-        ? `These suited cards do not satisfy the s + h ≥ 3 rule (s = ${windows}, h = ${highCards}).`
-        : "This hand is not trips, a pair of tens or better, or a qualifying three-card suited draw."
+        ? `This is not a qualifying three-card straight flush draw because it does not satisfy the s + h ≥ 3 rule (s = ${windows}, h = ${highCards}).`
+        : "This hand is not three of a kind, a pair of tens or better, or a qualifying three-card straight flush draw."
     };
   }
 
@@ -148,7 +148,7 @@
     if (!validateCards(cards, 4)) throw new Error("secondDecision requires four distinct cards.");
 
     if (fourCardMadePaying(cards)) {
-      return { action: "ride", reason: "You have a pair of tens or better, two pair, trips, or quads." };
+      return { action: "ride", reason: "This is a guaranteed winner: a pair of tens or better, two pair, three of a kind, or four of a kind." };
     }
 
     if (Math.max(...suitCounts(cards)) === 4) {
