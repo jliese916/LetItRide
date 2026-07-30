@@ -849,3 +849,37 @@ footer{color:var(--casa-muted)}
 @media(max-width:390px){
   .lookup-plus{height:auto}
 }
+
+
+/* Let It Ride v3 refinements */
+.lir-message.win{color:#22c55e!important}
+.lir-message.loss{color:#ef4444!important}
+
+.decision-ladder .strategy-variables{font-size:14px;line-height:1.65}
+.decision-ladder .strategy-variables strong{display:inline-block;margin:0 .08em;color:#fff4bc;font-size:1.3em;line-height:1}
+.decision-ladder .formula{font-size:1.28rem!important}
+
+.lir-lookup-layout{
+  grid-template-columns:auto auto auto;
+  justify-content:center;
+  width:fit-content;
+  max-width:100%;
+  margin-inline:auto;
+}
+.lookup-player-hand,.lookup-community-hand{justify-content:center}
+
+@media(max-width:560px){
+  .lir-lookup-layout{grid-template-columns:auto auto auto;justify-content:center;gap:6px;padding-inline:7px}
+}
+@media(max-width:390px){
+  .lir-lookup-layout{grid-template-columns:1fr;justify-items:center;width:100%}
+}
+
+
+/* Let It Ride v4 strategy examples */
+.lir-strategy-guide .strategy-example-row{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px}
+.lir-strategy-guide .strategy-example-item{display:grid;gap:5px;justify-items:center}
+.lir-strategy-guide .strategy-example-caption{color:#cbbf9f;font-size:10px;font-weight:800;line-height:1.2;text-align:center}
+.lir-strategy-guide .made-row .strategy-example-row{margin-top:6px}
+.lir-strategy-guide .made-row{display:block}
+@media(max-width:430px){.lir-strategy-guide .strategy-example-row{gap:7px}.lir-strategy-guide .strategy-example-caption{font-size:9px}}

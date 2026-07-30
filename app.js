@@ -7,7 +7,7 @@
   const $ = selector => document.querySelector(selector);
   const $$ = selector => [...document.querySelectorAll(selector)];
   const SUIT_CLASSES = ["suit-hearts", "suit-diamonds", "suit-clubs", "suit-spades"];
-  const STORAGE_KEY = "casaLetItRidePlayV2";
+  const STORAGE_KEY = "casaLetItRidePlayV3";
 
   const el = {
     tabs: $$(".mode-tab"),
@@ -144,7 +144,7 @@
       node.textContent = "+";
       node.setAttribute("aria-label", "Empty card slot");
     } else if (back) {
-      node.setAttribute("aria-label", "Face-down community card");
+      node.setAttribute("aria-label", "Face-down card");
     } else {
       const suitClass = SUIT_CLASSES[S.suitOf(card)];
       node.classList.add(suitClass);
@@ -233,17 +233,25 @@
     }
   }
 
-  function renderRoundCards(round, communityContainer, playerContainer) {
+  function renderRoundCards(round, communityContainer, playerContainer, { playerBacksWhenEmpty = false } = {}) {
     if (!round) {
       communityContainer.replaceChildren(cardElement(0, { back: true }), cardElement(0, { back: true }));
       playerContainer.replaceChildren();
-      for (let i = 0; i < 3; i += 1) playerContainer.append(cardElement(0, { placeholder: true }));
+      for (let i = 0; i < 3; i += 1) {
+        playerContainer.append(cardElement(0, playerBacksWhenEmpty ? { back: true } : { placeholder: true }));
+      }
       return;
     }
     renderCards(playerContainer, round.cards.slice(0, 3));
     communityContainer.replaceChildren();
     communityContainer.append(cardElement(round.cards[3], { back: round.stage === 1 }));
     communityContainer.append(cardElement(round.cards[4], { back: round.stage < 3 }));
+  }
+
+  function setPlayMessage(text, tone = "neutral") {
+    el.playMessage.textContent = text;
+    el.playMessage.classList.remove("win", "loss");
+    if (tone === "win" || tone === "loss") el.playMessage.classList.add(tone);
   }
 
   function startPlayHand() {
@@ -254,7 +262,7 @@
     state.play.balance -= 3;
     state.play.optimalBalance -= 3;
     state.play.round = round;
-    el.playMessage.textContent = "Pull back the middle chip or let it ride.";
+    setPlayMessage("");
     renderPlay();
   }
 
@@ -297,7 +305,7 @@
 
     if (stage === 1) {
       round.stage = 2;
-      el.playMessage.textContent = "The first community card is revealed. Make your next choice.";
+      setPlayMessage("");
     } else {
       round.stage = 3;
       settlePlayRound();
@@ -325,13 +333,16 @@
 
     const net = roundTo(p.balance - round.balanceBefore, 6);
     const sign = net > 0 ? "+" : "";
-    el.playMessage.textContent = `${result.name}: ${sign}${formatUnits(net)} on the hand with ${actualActiveCount} bet${actualActiveCount === 1 ? "" : "s"} riding.`;
+    setPlayMessage(
+      `${result.name}: ${sign}${formatUnits(net)} on the hand with ${actualActiveCount} bet${actualActiveCount === 1 ? "" : "s"} riding.`,
+      net > 0 ? "win" : net < 0 ? "loss" : "neutral"
+    );
     savePlay();
   }
 
   function renderPlay() {
     const p = state.play;
-    renderRoundCards(p.round, el.playCommunity, el.playPlayer);
+    renderRoundCards(p.round, el.playCommunity, el.playPlayer, { playerBacksWhenEmpty: true });
     renderBetGrid(el.playBets, p.round, answerPlay, { showActions: true });
     el.playBalance.textContent = formatUnits(p.balance);
     el.playBalance.classList.toggle("positive", p.balance > 0);
@@ -635,14 +646,49 @@
     el.challengeGame.classList.add("hidden");
     el.challengeSummary.classList.remove("hidden");
     const percent = c.correct;
-    el.challengeSummary.innerHTML = `
-      <div class="certificate${c.correct === 100 ? " grand-master" : ""}">
-        <div class="certificate-small">CASA DEL JEFE</div>
-        <div class="certificate-title">Let It Ride Challenge</div>
-        <p>Complete-hand accuracy</p>
-        <div class="certificate-score">${c.correct} / 100 · ${percent.toFixed(1)}%</div>
-        <p>${c.correct === 100 ? "Perfect play. Every decision was optimal." : `${c.misses.length} hand${c.misses.length === 1 ? "" : "s"} contained at least one mistake.`}</p>
-      </div>
+    const passed = c.correct >= 98;
+    const perfect = c.correct === 100;
+    const today = new Intl.DateTimeFormat(undefined, { year: "numeric", month: "long", day: "numeric" }).format(new Date());
+
+    let resultMarkup;
+    if (perfect) {
+      resultMarkup = `
+        <div class="certificate grand-master">
+          <div class="grand-master-rays" aria-hidden="true"></div>
+          <div class="grand-master-stars" aria-hidden="true">♠ · ♦ · ♣ · ♥</div>
+          <div class="certificate-small">CASA DEL JEFE · HALL OF MASTERS</div>
+          <div class="certificate-title">LET IT RIDE<br>GRAND MASTER</div>
+          <div class="certificate-rule"></div>
+          <p>This certifies a flawless performance in the 100-hand El Jefe Let It Ride Challenge.</p>
+          <div class="certificate-score">100 / 100 · 100%</div>
+          <div class="grand-master-crest" aria-hidden="true">♛</div>
+          <div class="grand-master-subtitle">Perfect Strategy</div>
+          <p>Certified by El Jefe</p>
+          <p>${today}</p>
+          <div class="certificate-share">Screenshot this Grand Master certificate and send it to the group text thread.</div>
+        </div>`;
+    } else if (passed) {
+      resultMarkup = `
+        <div class="certificate">
+          <div class="certificate-small">CERTIFICATE OF LET IT RIDE READINESS</div>
+          <div class="certificate-title">EL JEFE APPROVED</div>
+          <div class="certificate-rule"></div>
+          <p>This certifies that the bearer completed the 100-hand El Jefe Let It Ride Challenge with:</p>
+          <div class="certificate-score">${c.correct} / 100 · ${percent.toFixed(1)}%</div>
+          <p>You are now approved to play Let It Ride at Casa del Jefe.</p>
+          <p>${today}</p>
+          <div class="certificate-share">Screenshot this certificate and send it to the group text thread.</div>
+        </div>`;
+    } else {
+      resultMarkup = `
+        <div class="challenge-fail">
+          <h2>Not quite El Jefe approved</h2>
+          <div class="challenge-final-score">${c.correct} / 100 · ${percent.toFixed(1)}%</div>
+          <p>You need 98 correct hands to pass. Practice the missed situations and try the challenge again.</p>
+        </div>`;
+    }
+
+    el.challengeSummary.innerHTML = `${resultMarkup}
       <div class="challenge-summary-actions"><button class="primary" id="challengeAgain" type="button">Try Again</button><button id="challengeDone" type="button">Done</button></div>
       <details class="review-details"><summary>Review missed hands (${c.misses.length})</summary><div id="challengeMisses"></div></details>`;
     $("#challengeAgain").addEventListener("click", startChallenge);
@@ -690,7 +736,7 @@
     if (!window.confirm("Reset the bankroll, accuracy, chart, and incorrect-decision history?")) return;
     state.play = emptyPlay();
     savePlay();
-    el.playMessage.textContent = "Press Deal to begin.";
+    setPlayMessage("Press Deal to begin.");
     renderPlay();
   }
 
