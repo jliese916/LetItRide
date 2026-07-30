@@ -224,6 +224,9 @@
     for (let i = 0; i < 3; i += 1) {
       const column = document.createElement("div");
       column.className = "bet-column";
+      if (round && showActions && activeIndex === i) {
+        column.classList.add("active-decision");
+      }
 
       const top = document.createElement("div");
       top.className = "bet-top";

@@ -1104,3 +1104,12 @@ footer{color:var(--casa-muted)}
   transform:translateX(var(--bet-align-x, 0px))!important;
   will-change:transform;
 }
+
+
+/* Let It Ride v15: keep the active decision controls above adjacent grid columns.
+   The horizontal buttons intentionally overflow their own chip column; without
+   this stacking rule, the neighboring column can intercept part of a click. */
+.bet-column{position:relative;z-index:1}
+.bet-column.active-decision{z-index:20}
+.bet-column.active-decision .bet-actions{position:relative;z-index:21;pointer-events:auto}
+.bet-column.active-decision .bet-actions button{position:relative;z-index:22;pointer-events:auto;touch-action:manipulation}

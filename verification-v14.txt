@@ -1,0 +1,3 @@
+{"stageCards":3,"physical":22100,"canonical":1755,"canonicalDecisionCounts":{"pull":1593,"ride":162},"mismatches":0}
+{"stageCards":4,"physical":270725,"canonical":16432,"canonicalDecisionCounts":{"ride":3310,"pull":12996,"indifferent":126},"mismatches":0}
+{"success":true}
