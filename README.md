@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v13
+# Casa del Jefe — Let It Ride Lounge v14
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -12,7 +12,7 @@ A self-contained browser trainer for the standard Let It Ride paytable:
 
 Indifferent second-decision states accept either action as correct.
 
-## v13 update
+## v14 update
 
 - Centered the three-chip group beneath the player cards.
 - The middle `2` spot is directly below the middle player card, with `$` and `1` equally spaced on either side.
@@ -26,3 +26,7 @@ Indifferent second-decision states accept either action as correct.
 - Conventional house edge: approximately 3.505679%.
 
 Open `index.html` directly, or serve this directory from any static web host.
+
+
+### v14 layout fix
+The middle betting chip is aligned at runtime to the center of the middle player card, making the layout consistent across browsers, zoom levels, and responsive widths. Static assets use versioned URLs to prevent stale hosted CSS or JavaScript.

@@ -1096,3 +1096,11 @@ footer{color:var(--casa-muted)}
   .bet-actions{gap:3px}
   .bet-actions button{width:60px}
 }
+
+
+/* Let It Ride v14: browser-measured alignment.
+   The middle chip is anchored to the center of the middle player card. */
+.bet-grid{
+  transform:translateX(var(--bet-align-x, 0px))!important;
+  will-change:transform;
+}

@@ -191,6 +191,31 @@
     return optimalAction === "indifferent" || userAction === optimalAction;
   }
 
+  function alignBetGridToMiddleCard(container) {
+    if (!container) return;
+    const table = container.closest(".lir-table");
+    const playerCards = table ? table.querySelectorAll(".player-zone .card") : [];
+    const middleSpot = container.querySelector(".bet-column:nth-child(2) .bet-spot");
+    if (playerCards.length < 3 || !middleSpot) return;
+
+    // Measure from an unshifted rail, then anchor the center chip to the
+    // center of the player's middle card in the current browser layout.
+    container.style.setProperty("--bet-align-x", "0px");
+    const cardRect = playerCards[1].getBoundingClientRect();
+    const spotRect = middleSpot.getBoundingClientRect();
+    if (!cardRect.width || !spotRect.width) return;
+
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const spotCenter = spotRect.left + spotRect.width / 2;
+    container.style.setProperty("--bet-align-x", `${(cardCenter - spotCenter).toFixed(2)}px`);
+  }
+
+  function alignAllBetGrids() {
+    [el.playBets, el.trainBets, el.challengeBets].forEach(container => {
+      if (container && container.offsetParent !== null) alignBetGridToMiddleCard(container);
+    });
+  }
+
   function renderBetGrid(container, round, handler, { showActions = true } = {}) {
     container.replaceChildren();
     const spotLabels = ["$", "2", "1"];
@@ -235,6 +260,7 @@
       column.append(top, below);
       container.append(column);
     }
+    requestAnimationFrame(() => alignBetGridToMiddleCard(container));
   }
 
   function renderRoundCards(round, communityContainer, playerContainer, { playerBacksWhenEmpty = false } = {}) {
@@ -739,6 +765,7 @@
     if (mode === "train" && !state.train.round) startTrainHand();
     if (mode === "lookup") renderLookup();
     if (mode === "play") requestAnimationFrame(drawBalanceChart);
+    requestAnimationFrame(alignAllBetGrids);
   }
 
   function resetPlay() {
@@ -810,6 +837,11 @@
       state.challenge.active ? answerChallenge("ride") : state.mode === "play" ? answerPlay("ride") : answerTrain("ride");
     }
   });
+
+  window.addEventListener("resize", () => requestAnimationFrame(alignAllBetGrids));
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => requestAnimationFrame(alignAllBetGrids));
+  }
 
   buildPickers();
   renderLookup();
