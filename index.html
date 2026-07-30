@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="theme-color" content="#07100d"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-title" content="Let It Ride Lounge"/>
+<title>Casa del Jefe — Let It Ride Lounge</title>
+<meta name="description" content="Exact optimal-strategy Let It Ride trainer with full-hand practice, bankroll tracking, lookup, and the El Jefe Challenge."/>
+<link href="./manifest.webmanifest" rel="manifest"/>
+<link href="./favicon-64.png" rel="icon" type="image/png"/>
+<link href="./apple-touch-icon.png" rel="apple-touch-icon"/>
+<link href="./styles.css" rel="stylesheet"/>
+</head>
+<body>
+<main class="app">
+<header class="castle-masthead">
+  <div aria-hidden="true" class="castle-tower tower-left"><div class="tower-crenels"><i></i><i></i><i></i></div><span class="tower-suit diamond">♦</span></div>
+  <div class="castle-hall">
+    <div aria-hidden="true" class="hall-crenels"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <img alt="" aria-hidden="true" class="masthead-crest" src="./jefe-crest.svg"/>
+    <div class="castle-kicker">Casa del Jefe</div>
+    <h1>Let It Ride Lounge</h1>
+    <details class="header-paytable" id="paytableDetails">
+      <summary>Standard paytable · three equal starting bets</summary>
+      <div aria-label="Let It Ride paytable" class="header-paytable-grid">
+        <span>Royal Flush</span><strong>1000 to 1</strong>
+        <span>Straight Flush</span><strong>200 to 1</strong>
+        <span>Four of a Kind</span><strong>50 to 1</strong>
+        <span>Full House</span><strong>11 to 1</strong>
+        <span>Flush</span><strong>8 to 1</strong>
+        <span>Straight</span><strong>5 to 1</strong>
+        <span>Three of a Kind</span><strong>3 to 1</strong>
+        <span>Two Pair</span><strong>2 to 1</strong>
+        <span>Pair of Tens+</span><strong>1 to 1</strong>
+      </div>
+    </details>
+  </div>
+  <div aria-hidden="true" class="castle-tower tower-right"><div class="tower-crenels"><i></i><i></i><i></i></div><span class="tower-suit club">♣</span></div>
+</header>
+
+<div class="challenge-launch"><button class="challenge-button" id="challengeLaunch" type="button"><span>Take the</span><strong>El Jefe Challenge</strong></button></div>
+
+<nav aria-label="App mode" class="mode-tabs" id="modeTabs">
+  <button aria-selected="true" class="mode-tab active" data-mode="play" type="button">Play</button>
+  <button aria-selected="false" class="mode-tab" data-mode="train" type="button">Train</button>
+  <button aria-selected="false" class="mode-tab" data-mode="lookup" type="button">Look Up</button>
+</nav>
+
+<section class="panel play-panel" id="playPanel">
+  <div class="lir-table">
+    <div class="lir-wordmark"><span>CASA DEL JEFE</span><small>LET IT RIDE LOUNGE</small></div>
+    <div aria-label="Play statistics" class="play-topline lir-topline">
+      <div><small>Balance</small><strong id="playBalance">0 units</strong></div>
+      <div class="play-accuracy-stat"><small>Accuracy</small><span class="play-accuracy-line"><strong id="playAccuracy">0.0%</strong><span aria-live="polite" class="play-decision-indicator" id="playDecisionIndicator"></span></span></div>
+      <div><small>Initial bet</small><strong>3 units</strong></div>
+    </div>
+    <div class="lir-zone">
+      <div class="zone-label light">Dealer Cards</div>
+      <div class="hand" id="playCommunity"></div>
+    </div>
+    <div class="lir-zone player-zone">
+      <div class="zone-label light">Your Cards</div>
+      <div class="hand" id="playPlayer"></div>
+    </div>
+    <div class="bet-grid" id="playBets" aria-label="Three Let It Ride bets"></div>
+    <div aria-live="polite" class="play-message lir-message" id="playMessage">Press Deal to begin.</div>
+    <button class="deal-button" id="playDeal" type="button">Deal (-3)</button>
+  </div>
+
+  <section class="balance-chart-card">
+    <div class="balance-chart-heading"><span>Bankroll history</span><small id="playChartSummary">0 completed hands</small></div>
+    <div class="balance-chart-legend"><span><i class="legend-line legend-actual"></i>Your play</span><span><i class="legend-line legend-optimal"></i>Optimal play</span></div>
+    <div class="chart-delta-pill" id="playDeltaSummary">Optimal − you: 0 units</div>
+    <canvas aria-label="Line chart comparing your balance with optimal play" class="balance-chart" id="playBalanceChart" role="img"></canvas>
+  </section>
+
+  <section aria-label="Session review and controls" class="session-hub">
+    <div class="session-hub-heading"><div><strong>Session review</strong><small>Review every incorrect decision from this session.</small></div><button class="danger-link session-reset-button" id="resetPlay" type="button">Reset session</button></div>
+    <details class="review-details session-review-list" id="playMistakesDetails"><summary>Incorrect decisions this session (<span id="playMistakeCount">0</span>)</summary><div class="play-missed-list" id="playMistakeList"></div></details>
+  </section>
+</section>
+
+<section class="panel hidden" id="trainPanel">
+  <p>Play the entire hand. A hand counts as correct only when both decisions are optimal.</p>
+  <div class="lir-table train-table">
+    <div class="lir-zone"><div class="zone-label light">Dealer Cards</div><div class="hand" id="trainCommunity"></div></div>
+    <div class="lir-zone player-zone"><div class="zone-label light">Your Cards</div><div class="hand" id="trainPlayer"></div></div>
+    <div class="bet-grid" id="trainBets"></div>
+    <div aria-live="polite" class="feedback lir-message" id="trainFeedback"></div>
+    <button class="deal-button" id="trainNew" type="button">New Hand</button>
+  </div>
+  <section class="score" id="trainScorePanel">
+    <div><small>HANDS</small><strong id="trainScore">0 / 0</strong></div>
+    <div><small>PERCENTAGE</small><strong id="trainPercent">0.0%</strong></div>
+    <button class="link" id="resetTrain" type="button">Reset score</button>
+  </section>
+</section>
+
+<section class="panel hidden" id="lookupPanel">
+  <p>Enter the three player cards. Add the revealed community card only when checking the second decision.</p>
+  <div class="lir-lookup-layout" aria-label="Visible Let It Ride cards">
+    <div class="lookup-card-group">
+      <div class="picker-label">Your three cards</div>
+      <div aria-label="Three-card player hand" class="hand lookup-hand lookup-player-hand" id="lookupPlayerHand"></div>
+    </div>
+    <div class="lookup-plus" aria-hidden="true">+</div>
+    <div class="lookup-card-group lookup-community-group">
+      <div class="picker-label">First community card</div>
+      <div aria-label="Optional revealed community card" class="hand lookup-hand lookup-community-hand" id="lookupCommunityHand"></div>
+    </div>
+  </div>
+  <div class="selection" id="lookupPrompt">Choose a rank for the first player card</div>
+  <div class="picker-section"><div class="picker-label">Rank</div><div class="rank-picker" id="rankPicker"></div></div>
+  <div class="picker-section"><div class="picker-label">Suit</div><div class="suit-picker" id="suitPicker"></div></div>
+  <div class="actions lookup-actions"><button id="clearLookup" type="button">Clear</button></div>
+  <div class="actions lookup-find-actions"><button class="primary" disabled id="findStrategy" type="button">Find Strategy</button></div>
+  <div aria-live="polite" class="lookup-feedback" id="lookupFeedback"></div>
+
+  <details class="strategy-ladder-details">
+    <summary>Complete Optimal Strategy</summary>
+    <div class="decision-ladder lir-strategy-guide">
+      <div class="hero">
+        <div class="eyebrow">Exact strategy · standard paytable</div>
+        <h1>Let It Ride Decision Guide</h1>
+        <p>Each decision concerns one removable unit. Pulling has zero future profit; riding keeps that unit exposed to the final five-card payout.</p>
+        <div class="instruction">Follow the first matching rule.</div>
+      </div>
+
+      <section class="section">
+        <div class="section-head"><h2>First decision · three cards</h2><div class="section-sub">Let Bet 1 ride only in these cases.</div></div>
+        <div class="made-grid">
+          <div class="made-card">
+            <h3><span class="badge auto">RIDE</span> Made hands</h3>
+            <div class="made-row"><span class="made-name">Three of a kind</span><span class="made-rule">Any rank.</span></div>
+            <div class="made-row"><span class="made-name">Pair of tens or better</span><span class="made-rule">Tens, jacks, queens, kings, or aces.</span></div>
+          </div>
+          <div class="made-card">
+            <h3><span class="badge break">DRAW RULE</span> Three unpaired suited cards</h3>
+            <div class="key-text">Count the five-card straight ranges containing all three ranks. Add the number of cards ranked ten or higher.</div>
+            <div class="formula">straight windows + high cards ≥ 3</div>
+            <div class="made-rule">Ride when the total is at least 3. Otherwise pull.</div>
+          </div>
+        </div>
+        <div class="foot"><strong>Practical version:</strong> 3 windows always ride; 2 windows need at least one T-or-higher card; 1 window needs at least two T-or-higher cards. The cards must all share a suit.</div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><h2>Second decision · four visible cards</h2><div class="section-sub">Let Bet 2 ride in the first applicable category.</div></div>
+        <div class="made-grid">
+          <div class="made-card">
+            <h3><span class="badge auto">RIDE</span> Guaranteed payout</h3>
+            <div class="made-row"><span class="made-name">Pair of tens or better</span><span class="made-rule">The fifth card cannot remove the paying pair.</span></div>
+            <div class="made-row"><span class="made-name">Two pair, trips, or quads</span><span class="made-rule">Already guaranteed to pay.</span></div>
+          </div>
+          <div class="made-card">
+            <h3><span class="badge auto">RIDE</span> Four-card flush</h3>
+            <div class="key-text">Any four visible cards of the same suit.</div>
+          </div>
+          <div class="made-card">
+            <h3><span class="badge break">STRAIGHT RULE</span> Four distinct ranks</h3>
+            <div class="key-text">Let <strong>s</strong> be the number of distinct ranks that complete a straight and <strong>h</strong> the number of visible cards ten or higher.</div>
+            <div class="formula">4s + h</div>
+            <div class="made-row"><span class="made-name">Above 8</span><span class="made-rule">Ride.</span></div>
+            <div class="made-row"><span class="made-name">Exactly 8</span><span class="made-rule">Indifferent — pull and ride are both optimal.</span></div>
+            <div class="made-row"><span class="made-name">Below 8</span><span class="made-rule">Pull.</span></div>
+          </div>
+        </div>
+        <div class="foot"><strong>Everything else:</strong> Pull. Indifferent choices are accepted as correct either way throughout the trainer.</div>
+      </section>
+
+      <section class="section">
+        <div class="key-grid">
+          <div class="key-box"><div class="key-title">Certified coverage</div><div class="key-text">The rules reproduced all 1,755 canonical three-card states and all 16,432 canonical four-card states with zero mismatches.</div></div>
+          <div class="key-box"><div class="key-title">Expected loss</div><div class="key-text">Optimal play loses exactly 37,963 / 1,082,900 base units per hand, about 3.50568% of one base unit—or 1.16856% of the three units initially placed.</div></div>
+        </div>
+      </section>
+    </div>
+  </details>
+</section>
+
+<section class="panel challenge-panel hidden" id="challengePanel">
+  <div id="challengeGame">
+    <div class="challenge-heading-row"><div><div class="challenge-kicker">EL JEFE CHALLENGE</div><h2 id="challengeProgress">Hand 1 of 100</h2></div><button class="challenge-exit" id="challengeExit" type="button">Exit</button></div>
+    <p>No feedback until the final score. Each full hand must have both decisions correct.</p>
+    <div class="lir-table train-table">
+      <div class="lir-zone"><div class="zone-label light">Dealer Cards</div><div class="hand" id="challengeCommunity"></div></div>
+      <div class="lir-zone player-zone"><div class="zone-label light">Your Cards</div><div class="hand" id="challengePlayer"></div></div>
+      <div class="bet-grid" id="challengeBets"></div>
+    </div>
+  </div>
+  <div class="hidden" id="challengeSummary"></div>
+</section>
+
+<footer><a class="footer-link" href="https://jliese916.github.io/"><img alt="" aria-hidden="true" src="./jefe-crest.svg"/>Return to Casa del Jefe</a></footer>
+</main>
+<script src="./strategy-engine.js"></script>
+<script defer src="./app.js"></script>
+</body>
+</html>

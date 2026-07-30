@@ -1,0 +1,1 @@
+{"success":true,"startingHands":22100,"fourCardSets":270725,"orderedCommunityOutcomes":51979200,"totalProfitNumerator":-1822224,"reducedOverallNetEVPerHand":"-37963/1082900","conventionalHouseEdgePercent":3.505679194754825,"edgeAsPercentOfThreeUnitsInitiallyPlaced":1.1685597315849416}
