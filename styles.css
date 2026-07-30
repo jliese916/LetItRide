@@ -1445,3 +1445,50 @@ footer{color:var(--casa-muted)}
   .lir-action-label{min-width:60px;font-size:.72rem}
   .bet-decision-text{font-size:.58rem}
 }
+
+
+/* Let It Ride v22 polish */
+.masthead-crest-link{
+  position:absolute;
+  left:50%;
+  top:-54px;
+  z-index:6;
+  display:block;
+  width:70px;
+  height:70px;
+  transform:translateX(-50%);
+  border-radius:50%;
+  -webkit-tap-highlight-color:transparent;
+}
+.masthead-crest-link .masthead-crest{
+  position:static;
+  left:auto;
+  top:auto;
+  width:100%;
+  height:100%;
+  transform:none;
+  pointer-events:auto;
+}
+.masthead-crest-link:focus-visible{
+  outline:3px solid rgba(241,217,146,.56);
+  outline-offset:4px;
+}
+.bet-decision-cue{color:#fff}
+.bet-decision-text{
+  width:100%;
+  margin-top:6px;
+  color:#fff;
+  text-align:center;
+}
+.lir-table>.lir-message:empty{
+  min-height:.45rem;
+  margin:0 auto 2px;
+}
+.lir-table>.lir-message:not(:empty){
+  min-height:2.2rem;
+  margin:4px auto 3px;
+}
+@media(max-width:520px){
+  .masthead-crest-link{top:-43px;width:56px;height:56px}
+  .bet-decision-text{margin-top:5px}
+}

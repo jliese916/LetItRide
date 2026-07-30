@@ -264,7 +264,7 @@
 
     const cueText = document.createElement("span");
     cueText.className = "bet-decision-text";
-    cueText.textContent = actionsActive ? `Choose decision ${round.stage}` : "Choose decision";
+    cueText.textContent = actionsActive ? `Choose Decision ${round.stage}` : "Choose Decision";
     cue.append(arrow, cueText);
 
     const actions = document.createElement("div");
@@ -424,7 +424,7 @@
     el.playBalance.classList.toggle("negative", p.balance < 0);
     el.playAccuracy.textContent = p.hands ? `${(100 * p.accurateHands / p.hands).toFixed(1)}%` : "0.0%";
     el.playDeal.disabled = Boolean(p.round && !p.round.completed);
-    el.playDeal.textContent = p.round && p.round.completed ? "New Hand (-3)" : "Deal (-3)";
+    el.playDeal.textContent = p.round && p.round.completed ? "New Hand" : "Deal";
     el.playChartSummary.textContent = `${p.hands} completed hand${p.hands === 1 ? "" : "s"}`;
     const delta = roundTo(p.optimalBalance - p.balance, 6);
     el.playDeltaSummary.textContent = `Optimal − you: ${formatUnits(delta)}`;
@@ -869,6 +869,19 @@
   window.addEventListener("resize", () => requestAnimationFrame(drawBalanceChart));
   window.addEventListener("keydown", event => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
+
+    if (event.key === "Enter" && !state.challenge.active) {
+      if (event.target instanceof HTMLButtonElement || event.target instanceof HTMLAnchorElement) return;
+      if (state.mode === "play" && !el.playDeal.disabled) {
+        event.preventDefault();
+        startPlayHand();
+      } else if (state.mode === "train") {
+        event.preventDefault();
+        startTrainHand();
+      }
+      return;
+    }
+
     const activeRound = state.challenge.active ? state.challenge.round : state.mode === "play" ? state.play.round : state.mode === "train" ? state.train.round : null;
     if (!activeRound || activeRound.completed) return;
     if (event.key.toLowerCase() === "p") {
