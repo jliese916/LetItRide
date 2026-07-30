@@ -114,15 +114,15 @@
     if (suited && windows + highCards >= 3) {
       return {
         action: "ride",
-        reason: `Three suited cards: ${windows} straight window${windows === 1 ? "" : "s"} plus ${highCards} card${highCards === 1 ? "" : "s"} ten or higher.`
+        reason: `These three suited cards satisfy the s + h ≥ 3 rule (s = ${windows}, h = ${highCards}).`
       };
     }
 
     return {
       action: "pull",
       reason: suited
-        ? `The suited draw is not strong enough (${windows} straight window${windows === 1 ? "" : "s"} plus ${highCards} high card${highCards === 1 ? "" : "s"}).`
-        : "This hand has no paying pair, trips, or qualifying three-card suited draw."
+        ? `These suited cards do not satisfy the s + h ≥ 3 rule (s = ${windows}, h = ${highCards}).`
+        : "This hand is not trips, a pair of tens or better, or a qualifying three-card suited draw."
     };
   }
 
@@ -148,7 +148,7 @@
     if (!validateCards(cards, 4)) throw new Error("secondDecision requires four distinct cards.");
 
     if (fourCardMadePaying(cards)) {
-      return { action: "ride", reason: "The four visible cards already guarantee a paying final hand." };
+      return { action: "ride", reason: "You have a pair of tens or better, two pair, trips, or quads." };
     }
 
     if (Math.max(...suitCounts(cards)) === 4) {
@@ -159,14 +159,19 @@
     if (completions.length > 0) {
       const highCards = distinctRanks(cards).filter(rank => rank >= 8).length;
       const score = 4 * completions.length + highCards;
-      const detail = `${completions.length} straight-completing rank${completions.length === 1 ? "" : "s"} and ${highCards} card${highCards === 1 ? "" : "s"} ten or higher`;
-
-      if (score > 8) return { action: "ride", reason: `Strong straight draw: ${detail}.` };
-      if (score === 8) return { action: "indifferent", reason: `Exact indifferent straight draw: ${detail}. Pulling and riding have equal EV.` };
-      return { action: "pull", reason: `The straight draw is not strong enough: ${detail}.` };
+      if (score > 8) {
+        return { action: "ride", reason: "This is an open-ended straight draw containing a ten or higher." };
+      }
+      if (score === 8 && completions.length === 2) {
+        return { action: "indifferent", reason: "This is a lower open-ended straight draw; all four cards are 9 or lower." };
+      }
+      if (score === 8) {
+        return { action: "indifferent", reason: "This is an inside Broadway draw." };
+      }
+      return { action: "pull", reason: "This straight draw does not match a Ride or Either category." };
     }
 
-    return { action: "pull", reason: "The four visible cards do not guarantee a payout or form a qualifying flush or straight draw." };
+    return { action: "pull", reason: "This hand does not match a Ride or Either category." };
   }
 
   function secondDecisionNumerator(cards) {

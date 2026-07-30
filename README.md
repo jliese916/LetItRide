@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v4
+# Casa del Jefe — Let It Ride Lounge v5
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -7,8 +7,8 @@ A self-contained browser trainer for the standard Let It Ride paytable:
 
 - **Play**: three-unit bankroll simulation, full-hand accuracy, incorrect-decision review, and actual-vs-optimal bankroll chart. A hand is accurate only when both decisions are optimal.
 - **Train**: practices complete hands. Each choice receives only `Correct!` or `Incorrect!`; the score is recorded after the full hand.
-- **Look Up**: accepts three player cards, plus an optional revealed community card, and reports the exact decision and one-unit ride EV. The reference guide includes visual examples for every Ride, Either, and Pull category.
-- **El Jefe Challenge**: 100 complete hands without immediate feedback. A score of 98% passes; 100% earns the Let It Ride Grand Master certificate.
+- **Look Up**: accepts three player cards, plus an optional revealed community card, and reports the decision with a plain-English explanation. The reference guide includes visual examples for every Ride, Either, and Pull category.
+- **El Jefe Challenge**: 200 complete hands without immediate feedback. A score of 196/200 (98%) passes; 200/200 earns the Let It Ride Grand Master certificate.
 
 Indifferent second-decision states accept Pull or Let It Ride as correct.
 

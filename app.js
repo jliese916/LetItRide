@@ -8,6 +8,8 @@
   const $$ = selector => [...document.querySelectorAll(selector)];
   const SUIT_CLASSES = ["suit-hearts", "suit-diamonds", "suit-clubs", "suit-spades"];
   const STORAGE_KEY = "casaLetItRidePlayV3";
+  const CHALLENGE_HANDS = 200;
+  const CHALLENGE_PASSING_HANDS = 196;
 
   const el = {
     tabs: $$(".mode-tab"),
@@ -569,27 +571,26 @@
     if (cards.length < 3) return;
     const stage = cards.length === 3 ? 1 : 2;
     const strategy = stage === 1 ? S.firstDecision(cards) : S.secondDecision(cards);
-    const numerator = stage === 1 ? S.firstDecisionNumerator(cards) : S.secondDecisionNumerator(cards);
-    const denominator = stage === 1 ? 1176 : 48;
-    const fraction = reducedFraction(numerator, denominator);
-    const ev = numerator / denominator;
 
     el.lookupFeedback.replaceChildren();
     const result = document.createElement("article");
     result.className = "lookup-result-card";
-    const heading = document.createElement("strong");
-    heading.className = strategy.action === "indifferent" ? "indifferent" : "";
-    heading.textContent = strategy.action === "indifferent"
-      ? "Both Pull and Let It Ride are optimal"
-      : `${actionText(strategy.action)} — Decision ${stage}`;
+
+    const heading = document.createElement("div");
+    heading.className = "lookup-result-heading";
+    const bubble = document.createElement("span");
+    const bubbleType = strategy.action === "indifferent" ? "either" : strategy.action;
+    bubble.className = `lookup-decision-bubble ${bubbleType}`;
+    bubble.textContent = strategy.action === "indifferent" ? "EITHER" : strategy.action.toUpperCase();
+    const stageLabel = document.createElement("span");
+    stageLabel.className = "lookup-stage-label";
+    stageLabel.textContent = stage === 1 ? "First decision" : "Second decision";
+    heading.append(bubble, stageLabel);
+
     const reason = document.createElement("div");
+    reason.className = "lookup-result-reason";
     reason.textContent = strategy.reason;
-    const exact = document.createElement("div");
-    exact.className = "lookup-ev";
-    exact.textContent = `Ride EV for the removable unit: ${fraction} (${formatSigned(ev, 6)} units). Pull EV: 0.`;
-    const key = document.createElement("small");
-    key.textContent = `Canonical key: ${S.canonicalKey(cards)}`;
-    result.append(heading, reason, exact, key);
+    result.append(heading, reason);
     el.lookupFeedback.append(result);
   }
 
@@ -626,7 +627,7 @@
     if (handCorrect) c.correct += 1;
     else c.misses.push({ number: c.number, decisions: round.decisions.filter((_, i) => !round.correctness[i]) });
 
-    if (c.number >= 100) finishChallenge();
+    if (c.number >= CHALLENGE_HANDS) finishChallenge();
     else {
       c.number += 1;
       c.round = newRound();
@@ -636,7 +637,7 @@
 
   function renderChallenge() {
     const c = state.challenge;
-    el.challengeProgress.textContent = `Hand ${c.number} of 100`;
+    el.challengeProgress.textContent = `Hand ${c.number} of ${CHALLENGE_HANDS}`;
     renderRoundCards(c.round, el.challengeCommunity, el.challengePlayer);
     renderBetGrid(el.challengeBets, c.round, answerChallenge, { showActions: true });
   }
@@ -645,9 +646,9 @@
     const c = state.challenge;
     el.challengeGame.classList.add("hidden");
     el.challengeSummary.classList.remove("hidden");
-    const percent = c.correct;
-    const passed = c.correct >= 98;
-    const perfect = c.correct === 100;
+    const percent = 100 * c.correct / CHALLENGE_HANDS;
+    const passed = c.correct >= CHALLENGE_PASSING_HANDS;
+    const perfect = c.correct === CHALLENGE_HANDS;
     const today = new Intl.DateTimeFormat(undefined, { year: "numeric", month: "long", day: "numeric" }).format(new Date());
 
     let resultMarkup;
@@ -659,8 +660,8 @@
           <div class="certificate-small">CASA DEL JEFE · HALL OF MASTERS</div>
           <div class="certificate-title">LET IT RIDE<br>GRAND MASTER</div>
           <div class="certificate-rule"></div>
-          <p>This certifies a flawless performance in the 100-hand El Jefe Let It Ride Challenge.</p>
-          <div class="certificate-score">100 / 100 · 100%</div>
+          <p>This certifies a flawless performance in the ${CHALLENGE_HANDS}-hand El Jefe Let It Ride Challenge.</p>
+          <div class="certificate-score">${CHALLENGE_HANDS} / ${CHALLENGE_HANDS} · 100%</div>
           <div class="grand-master-crest" aria-hidden="true">♛</div>
           <div class="grand-master-subtitle">Perfect Strategy</div>
           <p>Certified by El Jefe</p>
@@ -673,8 +674,8 @@
           <div class="certificate-small">CERTIFICATE OF LET IT RIDE READINESS</div>
           <div class="certificate-title">EL JEFE APPROVED</div>
           <div class="certificate-rule"></div>
-          <p>This certifies that the bearer completed the 100-hand El Jefe Let It Ride Challenge with:</p>
-          <div class="certificate-score">${c.correct} / 100 · ${percent.toFixed(1)}%</div>
+          <p>This certifies that the bearer completed the ${CHALLENGE_HANDS}-hand El Jefe Let It Ride Challenge with:</p>
+          <div class="certificate-score">${c.correct} / ${CHALLENGE_HANDS} · ${percent.toFixed(1)}%</div>
           <p>You are now approved to play Let It Ride at Casa del Jefe.</p>
           <p>${today}</p>
           <div class="certificate-share">Screenshot this certificate and send it to the group text thread.</div>
@@ -683,8 +684,8 @@
       resultMarkup = `
         <div class="challenge-fail">
           <h2>Not quite El Jefe approved</h2>
-          <div class="challenge-final-score">${c.correct} / 100 · ${percent.toFixed(1)}%</div>
-          <p>You need 98 correct hands to pass. Practice the missed situations and try the challenge again.</p>
+          <div class="challenge-final-score">${c.correct} / ${CHALLENGE_HANDS} · ${percent.toFixed(1)}%</div>
+          <p>You need ${CHALLENGE_PASSING_HANDS} correct hands to pass. Practice the missed situations and try the challenge again.</p>
         </div>`;
     }
 
