@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v27
+# Casa del Jefe — Let It Ride Lounge v29
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -113,3 +113,9 @@ Restored the Play accuracy feedback indicator. After each completed hand, a gree
 - Added an **Observational Plays** addendum at the bottom of Complete Optimal Strategy.
 - Documents first-decision deviations for T-J-Q, the other three-rank combinations from T/J/Q/K, and low pairs when complete opposing hands reveal no matching ranks.
 - Clarifies that the main guide assumes only the player's cards and community cards are known.
+
+
+## v29 update
+
+- Reserved a stable vertical-scrollbar gutter so Play, Train, and Look Up remain on the exact same horizontal centerline when switching modes.
+- Advanced cache-busting asset URLs and the service-worker cache to v29.

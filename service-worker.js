@@ -1,7 +1,7 @@
 "use strict";
-const CACHE = "casa-let-it-ride-v27";
+const CACHE = "casa-let-it-ride-v29";
 const ASSETS = [
-  "./", "./index.html", "./styles.css?v=27", "./strategy-engine.js?v=27", "./app.js?v=27",
+  "./", "./index.html", "./styles.css?v=29", "./strategy-engine.js?v=29", "./app.js?v=29",
   "./manifest.webmanifest", "./jefe-crest.svg", "./favicon-64.png",
   "./apple-touch-icon.png", "./icon-192.png", "./icon-512.png"
 ];
