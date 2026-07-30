@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v5
+# Casa del Jefe — Let It Ride Lounge v7
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -33,3 +33,9 @@ During Play, Train, or Challenge:
 
 - `P`: Pull Back
 - `R`: Let It Ride
+
+## v7 update
+
+- Added a subtle single-player cream wedge and curved dealer-area stripe inspired by a physical Let It Ride table.
+- Community-card positions now use yellow casino-style frames.
+- The `$`, `2`, and `1` betting positions follow a slight diagonal while decision controls remain centered on the active chip.

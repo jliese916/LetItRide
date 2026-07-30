@@ -48,13 +48,21 @@
 </nav>
 <section class="panel play-panel" id="playPanel">
 <div class="lir-table">
+<div aria-hidden="true" class="lir-table-marking">
+<svg viewBox="0 0 650 560" preserveAspectRatio="none" focusable="false">
+<path class="felt-wedge-fill" d="M58 315 C170 90 455 70 592 238 L490 548 L150 548 Z" fill="#f8efd0" fill-opacity="0.018"></path>
+<path class="felt-wedge-line" d="M58 315 C170 90 455 70 592 238" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+<path class="felt-wedge-line" d="M58 315 L150 548" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+<path class="felt-wedge-line" d="M592 238 L490 548" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+</svg>
+</div>
 <div class="lir-wordmark"><span>CASA DEL JEFE</span><small>LET IT RIDE LOUNGE</small></div>
 <div aria-label="Play statistics" class="play-topline lir-topline">
 <div><small>Balance</small><strong id="playBalance">0 units</strong></div>
 <div class="play-accuracy-stat"><small>Accuracy</small><span class="play-accuracy-line"><strong id="playAccuracy">0.0%</strong></span></div>
 <div><small>Initial bet</small><strong>3 units</strong></div>
 </div>
-<div class="lir-zone">
+<div class="lir-zone community-zone">
 <div class="zone-label light">Community Cards</div>
 <div class="hand" id="playCommunity"></div>
 </div>
@@ -80,7 +88,15 @@
 <section class="panel hidden" id="trainPanel">
 <p>Play the hand and test your strategy.</p>
 <div class="lir-table train-table">
-<div class="lir-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="trainCommunity"></div></div>
+<div aria-hidden="true" class="lir-table-marking">
+<svg viewBox="0 0 650 560" preserveAspectRatio="none" focusable="false">
+<path class="felt-wedge-fill" d="M58 315 C170 90 455 70 592 238 L490 548 L150 548 Z" fill="#f8efd0" fill-opacity="0.018"></path>
+<path class="felt-wedge-line" d="M58 315 C170 90 455 70 592 238" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+<path class="felt-wedge-line" d="M58 315 L150 548" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+<path class="felt-wedge-line" d="M592 238 L490 548" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+</svg>
+</div>
+<div class="lir-zone community-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="trainCommunity"></div></div>
 <div class="lir-zone player-zone"><div class="zone-label light">Player Cards</div><div class="hand" id="trainPlayer"></div></div>
 <div class="bet-grid" id="trainBets"></div>
 <div aria-live="polite" class="feedback lir-message" id="trainFeedback"></div>
@@ -188,7 +204,15 @@
 <div class="challenge-heading-row"><div><div class="challenge-kicker">EL JEFE CHALLENGE</div><h2 id="challengeProgress">Hand 1 of 200</h2></div><button class="challenge-exit" id="challengeExit" type="button">Exit</button></div>
 <p>No feedback until the final score. You need 196 correct hands (98%) to pass.</p>
 <div class="lir-table train-table">
-<div class="lir-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="challengeCommunity"></div></div>
+<div aria-hidden="true" class="lir-table-marking">
+<svg viewBox="0 0 650 560" preserveAspectRatio="none" focusable="false">
+<path class="felt-wedge-fill" d="M58 315 C170 90 455 70 592 238 L490 548 L150 548 Z" fill="#f8efd0" fill-opacity="0.018"></path>
+<path class="felt-wedge-line" d="M58 315 C170 90 455 70 592 238" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+<path class="felt-wedge-line" d="M58 315 L150 548" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+<path class="felt-wedge-line" d="M592 238 L490 548" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
+</svg>
+</div>
+<div class="lir-zone community-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="challengeCommunity"></div></div>
 <div class="lir-zone player-zone"><div class="zone-label light">Player Cards</div><div class="hand" id="challengePlayer"></div></div>
 <div class="bet-grid" id="challengeBets"></div>
 </div>
