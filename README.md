@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v19
+# Casa del Jefe — Let It Ride Lounge v21
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -25,12 +25,6 @@ Indifferent second-decision states accept either action as correct.
 - Reworked the Train table so the cream arc passes between the community and player cards.
 - Lowered the player cards slightly to match the Play table geometry.
 - Compressed the betting and feedback area so the New Hand button sits closer to the action.
-
-## Verification
-
-- All 1,755 canonical three-card states: zero mismatches.
-- All 16,432 canonical four-card states: zero mismatches.
-- Conventional house edge: approximately 3.505679%.
 
 Open `index.html` directly, or serve this directory from any static web host.
 
@@ -59,3 +53,19 @@ The active Pull Back and Let It Ride controls are raised above neighboring chip 
 - Widened the Pull Back and Let It Ride buttons after tightening the chip rail.
 - Preserved narrower responsive widths for small and very small phones.
 - Kept the middle chip anchored beneath the middle player card.
+
+
+## v20 update
+
+- Replaced the moving, per-chip action buttons with a fixed centered Blackjack-style button pair.
+- Added a moving upward arrow and “Choose decision 1/2” cue beneath the active removable chip.
+- Added red `P` and green `R` action symbols matching the strategy-guide language.
+- Kept the full button surfaces clickable and preserved the brief 120 ms transition lock.
+
+
+## v21 update
+
+- Corrected the physical wager order: Decision 1 now points to and removes the right-hand `1` chip.
+- Decision 2 then moves to and removes the middle `2` chip.
+- The left `$` chip remains mandatory throughout the hand.
+- Applied the corrected order consistently in Play, Train, and the El Jefe Challenge.

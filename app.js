@@ -191,6 +191,14 @@
     return optimalAction === "indifferent" || userAction === optimalAction;
   }
 
+  // The physical table is labeled $, 2, 1 from left to right.
+  // Decision 1 acts on the right-hand 1 wager; Decision 2 acts on the middle 2 wager.
+  function betIndexForStage(stage) {
+    if (stage === 1) return 2;
+    if (stage === 2) return 1;
+    return -1;
+  }
+
   function alignBetGridToMiddleCard(container) {
     if (!container) return;
     const table = container.closest(".lir-table");
@@ -219,14 +227,13 @@
   function renderBetGrid(container, round, handler, { showActions = true } = {}) {
     container.replaceChildren();
     const spotLabels = ["$", "2", "1"];
-    const activeIndex = round && !round.completed ? round.stage : -1;
+    const activeIndex = round && !round.completed ? betIndexForStage(round.stage) : -1;
+    const actionsActive = Boolean(round && showActions && activeIndex >= 1 && activeIndex <= 2);
 
     for (let i = 0; i < 3; i += 1) {
       const column = document.createElement("div");
       column.className = "bet-column";
-      if (round && showActions && activeIndex === i) {
-        column.classList.add("active-decision");
-      }
+      if (actionsActive && activeIndex === i) column.classList.add("active-decision");
 
       const top = document.createElement("div");
       top.className = "bet-top";
@@ -239,30 +246,63 @@
         chip.className = "bet-chip";
         spot.append(chip);
       }
+
       top.append(spot);
-
-      const below = document.createElement("div");
-      below.className = "bet-actions";
-      if (!round || !showActions || activeIndex !== i) {
-        below.classList.add("inactive");
-        below.innerHTML = "<button type=\"button\">Pull Back</button><button type=\"button\">Let It Ride</button>";
-      } else {
-        const pull = document.createElement("button");
-        pull.type = "button";
-        pull.className = "pull-button";
-        pull.textContent = "Pull Back";
-        pull.addEventListener("click", () => handler("pull"));
-        const ride = document.createElement("button");
-        ride.type = "button";
-        ride.className = "ride-button";
-        ride.textContent = "Let It Ride";
-        ride.addEventListener("click", () => handler("ride"));
-        below.append(pull, ride);
-      }
-
-      column.append(top, below);
+      column.append(top);
       container.append(column);
     }
+
+    const cue = document.createElement("div");
+    cue.className = "bet-decision-cue";
+    if (!actionsActive) cue.classList.add("inactive");
+    cue.style.gridColumn = actionsActive ? String(activeIndex + 1) : "2";
+
+    const arrow = document.createElement("span");
+    arrow.className = "bet-decision-arrow";
+    arrow.textContent = "↑";
+    arrow.setAttribute("aria-hidden", "true");
+
+    const cueText = document.createElement("span");
+    cueText.className = "bet-decision-text";
+    cueText.textContent = actionsActive ? `Choose decision ${round.stage}` : "Choose decision";
+    cue.append(arrow, cueText);
+
+    const actions = document.createElement("div");
+    actions.className = "lir-decision-actions";
+    actions.setAttribute("aria-label", actionsActive ? `Decision ${round.stage} actions` : "Decision actions");
+    if (!actionsActive) actions.classList.add("inactive");
+
+    const makeButton = (action, label, keyText) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = `lir-decision-button ${action}-button`;
+      button.setAttribute("aria-label", label);
+
+      const key = document.createElement("span");
+      key.className = `lir-action-key strategy-${action}`;
+      key.textContent = keyText;
+      key.setAttribute("aria-hidden", "true");
+
+      const buttonLabel = document.createElement("span");
+      buttonLabel.className = "lir-action-label";
+      buttonLabel.textContent = label;
+      buttonLabel.setAttribute("aria-hidden", "true");
+
+      button.append(key, buttonLabel);
+      if (actionsActive) button.addEventListener("click", () => handler(action));
+      else {
+        button.disabled = true;
+        button.tabIndex = -1;
+      }
+      return button;
+    };
+
+    actions.append(
+      makeButton("pull", "Pull Back", "P"),
+      makeButton("ride", "Let It Ride", "R")
+    );
+
+    container.append(cue, actions);
     requestAnimationFrame(() => alignBetGridToMiddleCard(container));
   }
 
@@ -308,7 +348,7 @@
     const stage = round.stage;
     const strategy = strategyFor(round);
     const correct = decisionCorrect(action, strategy.action);
-    const betIndex = stage;
+    const betIndex = betIndexForStage(stage);
     const visible = visibleCardsForStage(round, stage);
 
     if (action === "pull") {
@@ -485,7 +525,7 @@
     if (performance.now() < (round.actionLockedUntil || 0)) return;
     const strategy = strategyFor(round);
     const correct = decisionCorrect(action, strategy.action);
-    const index = round.stage;
+    const index = betIndexForStage(round.stage);
     if (action === "pull") round.actualActive[index] = false;
     round.correctness.push(correct);
     round.decisions.push({ stage: round.stage, action, optimal: strategy.action, reason: strategy.reason });
@@ -647,7 +687,7 @@
     if (performance.now() < (round.actionLockedUntil || 0)) return;
     const strategy = strategyFor(round);
     const correct = decisionCorrect(action, strategy.action);
-    if (action === "pull") round.actualActive[round.stage] = false;
+    if (action === "pull") round.actualActive[betIndexForStage(round.stage)] = false;
     round.correctness.push(correct);
     round.decisions.push({ stage: round.stage, action, optimal: strategy.action, reason: strategy.reason, cards: visibleCardsForStage(round) });
 
