@@ -53,20 +53,20 @@
     <div class="lir-wordmark"><span>CASA DEL JEFE</span><small>LET IT RIDE LOUNGE</small></div>
     <div aria-label="Play statistics" class="play-topline lir-topline">
       <div><small>Balance</small><strong id="playBalance">0 units</strong></div>
-      <div class="play-accuracy-stat"><small>Accuracy</small><span class="play-accuracy-line"><strong id="playAccuracy">0.0%</strong><span aria-live="polite" class="play-decision-indicator" id="playDecisionIndicator"></span></span></div>
+      <div class="play-accuracy-stat"><small>Accuracy</small><span class="play-accuracy-line"><strong id="playAccuracy">0.0%</strong></span></div>
       <div><small>Initial bet</small><strong>3 units</strong></div>
     </div>
     <div class="lir-zone">
-      <div class="zone-label light">Dealer Cards</div>
+      <div class="zone-label light">Community Cards</div>
       <div class="hand" id="playCommunity"></div>
     </div>
     <div class="lir-zone player-zone">
-      <div class="zone-label light">Your Cards</div>
+      <div class="zone-label light">Player Cards</div>
       <div class="hand" id="playPlayer"></div>
     </div>
     <div class="bet-grid" id="playBets" aria-label="Three Let It Ride bets"></div>
     <div aria-live="polite" class="play-message lir-message" id="playMessage">Press Deal to begin.</div>
-    <button class="deal-button" id="playDeal" type="button">Deal (-3)</button>
+    <button class="deal-button table-hand-button" id="playDeal" type="button">Deal (-3)</button>
   </div>
 
   <section class="balance-chart-card">
@@ -85,11 +85,11 @@
 <section class="panel hidden" id="trainPanel">
   <p>Play the entire hand. A hand counts as correct only when both decisions are optimal.</p>
   <div class="lir-table train-table">
-    <div class="lir-zone"><div class="zone-label light">Dealer Cards</div><div class="hand" id="trainCommunity"></div></div>
-    <div class="lir-zone player-zone"><div class="zone-label light">Your Cards</div><div class="hand" id="trainPlayer"></div></div>
+    <div class="lir-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="trainCommunity"></div></div>
+    <div class="lir-zone player-zone"><div class="zone-label light">Player Cards</div><div class="hand" id="trainPlayer"></div></div>
     <div class="bet-grid" id="trainBets"></div>
     <div aria-live="polite" class="feedback lir-message" id="trainFeedback"></div>
-    <button class="deal-button" id="trainNew" type="button">New Hand</button>
+    <button class="deal-button train-next-button table-hand-button" id="trainNew" type="button">New Hand</button>
   </div>
   <section class="score" id="trainScorePanel">
     <div><small>HANDS</small><strong id="trainScore">0 / 0</strong></div>
@@ -99,15 +99,15 @@
 </section>
 
 <section class="panel hidden" id="lookupPanel">
-  <p>Enter the three player cards. Add the revealed community card only when checking the second decision.</p>
+  <p>Enter the visible cards.</p>
   <div class="lir-lookup-layout" aria-label="Visible Let It Ride cards">
     <div class="lookup-card-group">
-      <div class="picker-label">Your three cards</div>
+      <div class="picker-label">Player Cards</div>
       <div aria-label="Three-card player hand" class="hand lookup-hand lookup-player-hand" id="lookupPlayerHand"></div>
     </div>
     <div class="lookup-plus" aria-hidden="true">+</div>
     <div class="lookup-card-group lookup-community-group">
-      <div class="picker-label">First community card</div>
+      <div class="picker-label">Community Card</div>
       <div aria-label="Optional revealed community card" class="hand lookup-hand lookup-community-hand" id="lookupCommunityHand"></div>
     </div>
   </div>
@@ -124,12 +124,12 @@
       <div class="hero">
         <div class="eyebrow">Exact strategy · standard paytable</div>
         <h1>Let It Ride Decision Guide</h1>
-        <p>Each decision concerns one removable unit. Pulling has zero future profit; riding keeps that unit exposed to the final five-card payout.</p>
-        <div class="instruction">Follow the first matching rule.</div>
+        <p>Let a removable bet ride when the visible cards match a Ride rule below. In an indifferent state, pulling and riding are equally optimal.</p>
+        <div class="strategy-variables"><strong>s</strong> = number of distinct five-card straights that can contain all visible ranks &nbsp;·&nbsp; <strong>h</strong> = number of visible cards ranked ten or higher</div>
       </div>
 
       <section class="section">
-        <div class="section-head"><h2>First decision · three cards</h2><div class="section-sub">Let Bet 1 ride only in these cases.</div></div>
+        <div class="section-head"><h2>First decision · three cards</h2><div class="section-sub">Decide whether the middle bet stays in action.</div></div>
         <div class="made-grid">
           <div class="made-card">
             <h3><span class="badge auto">RIDE</span> Made hands</h3>
@@ -137,17 +137,19 @@
             <div class="made-row"><span class="made-name">Pair of tens or better</span><span class="made-rule">Tens, jacks, queens, kings, or aces.</span></div>
           </div>
           <div class="made-card">
-            <h3><span class="badge break">DRAW RULE</span> Three unpaired suited cards</h3>
-            <div class="key-text">Count the five-card straight ranges containing all three ranks. Add the number of cards ranked ten or higher.</div>
-            <div class="formula">straight windows + high cards ≥ 3</div>
-            <div class="made-rule">Ride when the total is at least 3. Otherwise pull.</div>
+            <h3><span class="badge auto">RIDE</span> Three unpaired suited cards</h3>
+            <div class="key-text">All three cards must share a suit.</div>
+            <div class="formula">s + h ≥ 3</div>
+          </div>
+          <div class="made-card pull-card">
+            <h3><span class="badge pull">PULL</span> All other hands</h3>
+            <div class="key-text">Pull back the middle bet when the hand does not fit either Ride category above.</div>
           </div>
         </div>
-        <div class="foot"><strong>Practical version:</strong> 3 windows always ride; 2 windows need at least one T-or-higher card; 1 window needs at least two T-or-higher cards. The cards must all share a suit.</div>
       </section>
 
       <section class="section">
-        <div class="section-head"><h2>Second decision · four visible cards</h2><div class="section-sub">Let Bet 2 ride in the first applicable category.</div></div>
+        <div class="section-head"><h2>Second decision · four visible cards</h2><div class="section-sub">Decide whether the final removable bet stays in action.</div></div>
         <div class="made-grid">
           <div class="made-card">
             <h3><span class="badge auto">RIDE</span> Guaranteed payout</h3>
@@ -159,15 +161,19 @@
             <div class="key-text">Any four visible cards of the same suit.</div>
           </div>
           <div class="made-card">
-            <h3><span class="badge break">STRAIGHT RULE</span> Four distinct ranks</h3>
-            <div class="key-text">Let <strong>s</strong> be the number of distinct ranks that complete a straight and <strong>h</strong> the number of visible cards ten or higher.</div>
-            <div class="formula">4s + h</div>
-            <div class="made-row"><span class="made-name">Above 8</span><span class="made-rule">Ride.</span></div>
-            <div class="made-row"><span class="made-name">Exactly 8</span><span class="made-rule">Indifferent — pull and ride are both optimal.</span></div>
-            <div class="made-row"><span class="made-name">Below 8</span><span class="made-rule">Pull.</span></div>
+            <h3><span class="badge auto">RIDE</span> Four-card straight draw</h3>
+            <div class="formula">4s + h &gt; 8</div>
+          </div>
+          <div class="made-card indifferent-card">
+            <h3><span class="badge indifferent-badge">EITHER</span> Indifferent straight draw</h3>
+            <div class="formula">4s + h = 8</div>
+            <div class="key-text">Pulling and riding have exactly the same expected value.</div>
+          </div>
+          <div class="made-card pull-card">
+            <h3><span class="badge pull">PULL</span> All other hands</h3>
+            <div class="key-text">Pull back the bet when the hand does not fit a Ride or indifferent category above.</div>
           </div>
         </div>
-        <div class="foot"><strong>Everything else:</strong> Pull. Indifferent choices are accepted as correct either way throughout the trainer.</div>
       </section>
 
       <section class="section">
@@ -185,8 +191,8 @@
     <div class="challenge-heading-row"><div><div class="challenge-kicker">EL JEFE CHALLENGE</div><h2 id="challengeProgress">Hand 1 of 100</h2></div><button class="challenge-exit" id="challengeExit" type="button">Exit</button></div>
     <p>No feedback until the final score. Each full hand must have both decisions correct.</p>
     <div class="lir-table train-table">
-      <div class="lir-zone"><div class="zone-label light">Dealer Cards</div><div class="hand" id="challengeCommunity"></div></div>
-      <div class="lir-zone player-zone"><div class="zone-label light">Your Cards</div><div class="hand" id="challengePlayer"></div></div>
+      <div class="lir-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="challengeCommunity"></div></div>
+      <div class="lir-zone player-zone"><div class="zone-label light">Player Cards</div><div class="hand" id="challengePlayer"></div></div>
       <div class="bet-grid" id="challengeBets"></div>
     </div>
   </div>

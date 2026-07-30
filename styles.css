@@ -766,3 +766,86 @@ footer{color:var(--casa-muted)}
 .play-topline strong{color:#fff;font-size:.94rem}
 .deal-button:disabled{opacity:.35;cursor:not-allowed;filter:saturate(.5)}
 @media(max-width:390px){.play-topline{gap:3px;padding-inline:5px}.play-topline small{font-size:.57rem}.play-topline strong{font-size:.81rem}}
+
+/* Let It Ride v2 refinements */
+.feedback.lir-message.correct{color:#15803d}
+.feedback.lir-message.incorrect{color:#b91c1c}
+
+.table-hand-button,
+.train-next-button{
+  position:relative;
+  z-index:1;
+  display:block;
+  min-width:150px;
+  min-height:45px;
+  margin:0 auto;
+  border-radius:11px;
+  font-size:1.05rem;
+  font-weight:850;
+}
+
+.bet-column{grid-template-rows:72px minmax(104px,auto);gap:12px}
+.bet-top{display:grid;place-items:center;min-height:72px}
+.bet-spot{position:relative;isolation:isolate}
+.bet-spot::before{
+  content:attr(data-spot-label);
+  position:absolute;
+  inset:0;
+  z-index:0;
+  display:grid;
+  place-items:center;
+  color:rgba(241,217,146,.34);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:1.35rem;
+  font-weight:900;
+  text-shadow:0 1px 2px rgba(0,0,0,.3);
+}
+.bet-chip{position:relative;z-index:1;color:transparent;text-shadow:none}
+.bet-chip.mandatory::after{content:none}
+.bet-actions{margin-top:7px}
+
+.lookup-plus{
+  align-self:end;
+  display:grid;
+  place-items:center;
+  height:104px;
+  line-height:1;
+}
+
+.decision-ladder .strategy-variables{
+  position:relative;
+  z-index:1;
+  margin-top:12px;
+  padding:9px 11px;
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:11px;
+  background:rgba(255,255,255,.08);
+  color:#d9e8de;
+  font-size:12px;
+  line-height:1.5;
+}
+.decision-ladder .strategy-variables strong{color:#fff}
+.decision-ladder .badge.pull{
+  border:1px solid rgba(220,85,85,.42);
+  background:rgba(185,28,28,.17);
+  color:#ffaaaa;
+}
+.decision-ladder .badge.indifferent-badge{
+  border:1px solid rgba(201,162,58,.42);
+  background:rgba(201,162,58,.17);
+  color:#f4d77d;
+}
+.decision-ladder .pull-card{border-color:rgba(220,85,85,.34)}
+.decision-ladder .indifferent-card{border-color:rgba(201,162,58,.34)}
+
+@media(max-width:560px){
+  .lookup-plus{height:75px}
+}
+@media(max-width:520px){
+  .bet-column{grid-template-rows:64px minmax(100px,auto);gap:10px}
+  .bet-top{min-height:64px}
+  .bet-actions{margin-top:6px}
+}
+@media(max-width:390px){
+  .lookup-plus{height:auto}
+}

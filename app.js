@@ -7,7 +7,7 @@
   const $ = selector => document.querySelector(selector);
   const $$ = selector => [...document.querySelectorAll(selector)];
   const SUIT_CLASSES = ["suit-hearts", "suit-diamonds", "suit-clubs", "suit-spades"];
-  const STORAGE_KEY = "casaLetItRidePlayV1";
+  const STORAGE_KEY = "casaLetItRidePlayV2";
 
   const el = {
     tabs: $$(".mode-tab"),
@@ -25,7 +25,6 @@
 
     playBalance: $("#playBalance"),
     playAccuracy: $("#playAccuracy"),
-    playDecisionIndicator: $("#playDecisionIndicator"),
     playCommunity: $("#playCommunity"),
     playPlayer: $("#playPlayer"),
     playBets: $("#playBets"),
@@ -72,11 +71,9 @@
       balanceHistory: [0],
       optimalHistory: [0],
       hands: 0,
-      decisions: 0,
-      correct: 0,
+      accurateHands: 0,
       mistakes: [],
-      round: null,
-      lastCorrect: null
+      round: null
     };
   }
 
@@ -91,8 +88,7 @@
         balanceHistory: Array.isArray(saved.balanceHistory) && saved.balanceHistory.length ? saved.balanceHistory : [0],
         optimalHistory: Array.isArray(saved.optimalHistory) && saved.optimalHistory.length ? saved.optimalHistory : [0],
         hands: Number(saved.hands) || 0,
-        decisions: Number(saved.decisions) || 0,
-        correct: Number(saved.correct) || 0,
+        accurateHands: Number(saved.accurateHands) || 0,
         mistakes: Array.isArray(saved.mistakes) ? saved.mistakes.slice(-100) : []
       };
     } catch (error) {
@@ -110,8 +106,7 @@
         balanceHistory: p.balanceHistory,
         optimalHistory: p.optimalHistory,
         hands: p.hands,
-        decisions: p.decisions,
-        correct: p.correct,
+        accurateHands: p.accurateHands,
         mistakes: p.mistakes
       }));
     } catch (error) {
@@ -194,7 +189,7 @@
 
   function renderBetGrid(container, round, handler, { showActions = true } = {}) {
     container.replaceChildren();
-    const labels = ["Base Bet", "First Decision", "Second Decision"];
+    const spotLabels = ["$", "2", "1"];
     const activeIndex = round && !round.completed ? round.stage : -1;
 
     for (let i = 0; i < 3; i += 1) {
@@ -202,19 +197,17 @@
       column.className = "bet-column";
 
       const top = document.createElement("div");
-      const label = document.createElement("div");
-      label.className = "bet-label";
-      label.textContent = labels[i];
+      top.className = "bet-top";
       const spot = document.createElement("div");
       spot.className = "bet-spot";
+      spot.dataset.spotLabel = spotLabels[i];
 
       if (round && round.actualActive[i]) {
         const chip = document.createElement("div");
-        chip.className = `bet-chip${i === 0 ? " mandatory" : ""}`;
-        chip.textContent = i === 0 ? "1" : "1";
+        chip.className = "bet-chip";
         spot.append(chip);
       }
-      top.append(label, spot);
+      top.append(spot);
 
       const below = document.createElement("div");
       below.className = "bet-actions";
@@ -261,8 +254,7 @@
     state.play.balance -= 3;
     state.play.optimalBalance -= 3;
     state.play.round = round;
-    state.play.lastCorrect = null;
-    el.playMessage.textContent = "First decision: pull back the middle chip or let it ride.";
+    el.playMessage.textContent = "Pull back the middle chip or let it ride.";
     renderPlay();
   }
 
@@ -276,10 +268,6 @@
     const correct = decisionCorrect(action, strategy.action);
     const betIndex = stage;
     const visible = visibleCardsForStage(round, stage);
-
-    p.decisions += 1;
-    if (correct) p.correct += 1;
-    p.lastCorrect = correct;
 
     if (action === "pull") {
       round.actualActive[betIndex] = false;
@@ -307,21 +295,17 @@
       p.mistakes = p.mistakes.slice(-100);
     }
 
-    const feedback = strategy.action === "indifferent"
-      ? "Correct — this is an indifferent state. Pulling and riding have the same exact EV."
-      : `${correct ? "Correct" : "Not optimal"} — ${strategy.reason}`;
-
     if (stage === 1) {
       round.stage = 2;
-      el.playMessage.textContent = `${feedback} First community card revealed; now decide on the third chip.`;
+      el.playMessage.textContent = "The first community card is revealed. Make your next choice.";
     } else {
       round.stage = 3;
-      settlePlayRound(feedback);
+      settlePlayRound();
     }
     renderPlay();
   }
 
-  function settlePlayRound(prefix) {
+  function settlePlayRound() {
     const p = state.play;
     const round = p.round;
     const result = S.evaluateFive(round.cards);
@@ -334,13 +318,14 @@
     p.balance = roundTo(p.balance, 6);
     p.optimalBalance = roundTo(p.optimalBalance, 6);
     p.hands += 1;
+    if (round.correctness.every(Boolean)) p.accurateHands += 1;
     p.balanceHistory.push(p.balance);
     p.optimalHistory.push(p.optimalBalance);
     round.completed = true;
 
     const net = roundTo(p.balance - round.balanceBefore, 6);
     const sign = net > 0 ? "+" : "";
-    el.playMessage.textContent = `${prefix} ${result.name}: ${sign}${formatUnits(net)} on the hand with ${actualActiveCount} bet${actualActiveCount === 1 ? "" : "s"} riding.`;
+    el.playMessage.textContent = `${result.name}: ${sign}${formatUnits(net)} on the hand with ${actualActiveCount} bet${actualActiveCount === 1 ? "" : "s"} riding.`;
     savePlay();
   }
 
@@ -351,11 +336,9 @@
     el.playBalance.textContent = formatUnits(p.balance);
     el.playBalance.classList.toggle("positive", p.balance > 0);
     el.playBalance.classList.toggle("negative", p.balance < 0);
-    el.playAccuracy.textContent = p.decisions ? `${(100 * p.correct / p.decisions).toFixed(1)}%` : "0.0%";
-    el.playDecisionIndicator.textContent = p.lastCorrect === null ? "" : p.lastCorrect ? "✓" : "✕";
-    el.playDecisionIndicator.className = `play-decision-indicator${p.lastCorrect === true ? " correct pulse" : p.lastCorrect === false ? " incorrect pulse" : ""}`;
+    el.playAccuracy.textContent = p.hands ? `${(100 * p.accurateHands / p.hands).toFixed(1)}%` : "0.0%";
     el.playDeal.disabled = Boolean(p.round && !p.round.completed);
-    el.playDeal.textContent = p.round && p.round.completed ? "Deal Next Hand (-3)" : "Deal (-3)";
+    el.playDeal.textContent = p.round && p.round.completed ? "New Hand (-3)" : "Deal (-3)";
     el.playChartSummary.textContent = `${p.hands} completed hand${p.hands === 1 ? "" : "s"}`;
     const delta = roundTo(p.optimalBalance - p.balance, 6);
     el.playDeltaSummary.textContent = `Optimal − you: ${formatUnits(delta)}`;
@@ -445,7 +428,7 @@
 
   function startTrainHand() {
     state.train.round = newRound();
-    el.trainFeedback.textContent = "First decision: choose beneath the middle chip.";
+    el.trainFeedback.textContent = "";
     el.trainFeedback.className = "feedback lir-message";
     renderTrain();
   }
@@ -460,26 +443,17 @@
     round.correctness.push(correct);
     round.decisions.push({ stage: round.stage, action, optimal: strategy.action, reason: strategy.reason });
 
-    const feedback = strategy.action === "indifferent"
-      ? "Correct — both actions are optimal in this exact state."
-      : `${correct ? "Correct" : "Incorrect"} — ${strategy.reason}`;
+    el.trainFeedback.textContent = correct ? "Correct!" : "Incorrect!";
+    el.trainFeedback.className = `feedback lir-message ${correct ? "correct" : "incorrect"}`;
 
     if (round.stage === 1) {
       round.stage = 2;
-      el.trainFeedback.textContent = `${feedback} Now make the second decision.`;
-      el.trainFeedback.className = `feedback lir-message ${correct ? "correct" : "incorrect"}`;
     } else {
       round.stage = 3;
       round.completed = true;
-      const result = S.evaluateFive(round.cards);
       const handCorrect = round.correctness.every(Boolean);
       state.train.hands += 1;
       if (handCorrect) state.train.correct += 1;
-      const missed = round.decisions.filter((_, i) => !round.correctness[i]).map(d => `Decision ${d.stage}`).join(" and ");
-      el.trainFeedback.textContent = handCorrect
-        ? `${feedback} Hand correct. Final hand: ${result.name}.`
-        : `${feedback} Hand incorrect${missed ? ` — missed ${missed}` : ""}. Final hand: ${result.name}.`;
-      el.trainFeedback.className = `feedback lir-message ${handCorrect ? "correct" : "incorrect"}`;
     }
     renderTrain();
   }
@@ -488,7 +462,7 @@
     renderRoundCards(state.train.round, el.trainCommunity, el.trainPlayer);
     renderBetGrid(el.trainBets, state.train.round, answerTrain, { showActions: true });
     el.trainNew.disabled = Boolean(state.train.round && !state.train.round.completed);
-    el.trainNew.textContent = state.train.round && state.train.round.completed ? "Next Hand" : "New Hand";
+    el.trainNew.textContent = "New Hand";
     el.trainScore.textContent = `${state.train.correct} / ${state.train.hands}`;
     el.trainPercent.textContent = state.train.hands ? `${(100 * state.train.correct / state.train.hands).toFixed(1)}%` : "0.0%";
   }
