@@ -10,6 +10,7 @@
   const STORAGE_KEY = "casaLetItRidePlayV3";
   const CHALLENGE_HANDS = 200;
   const CHALLENGE_PASSING_HANDS = 196;
+  const DECISION_TRANSITION_LOCK_MS = 120;
 
   const el = {
     tabs: $$(".mode-tab"),
@@ -133,7 +134,8 @@
       optimalActive: [true, true, true],
       correctness: [],
       decisions: [],
-      completed: false
+      completed: false,
+      actionLockedUntil: 0
     };
   }
 
@@ -272,6 +274,7 @@
     const p = state.play;
     const round = p.round;
     if (!round || round.completed) return;
+    if (performance.now() < (round.actionLockedUntil || 0)) return;
 
     const stage = round.stage;
     const strategy = strategyFor(round);
@@ -306,6 +309,7 @@
     }
 
     if (stage === 1) {
+      round.actionLockedUntil = performance.now() + DECISION_TRANSITION_LOCK_MS;
       round.stage = 2;
       setPlayMessage("");
     } else {
@@ -449,6 +453,7 @@
   function answerTrain(action) {
     const round = state.train.round;
     if (!round || round.completed) return;
+    if (performance.now() < (round.actionLockedUntil || 0)) return;
     const strategy = strategyFor(round);
     const correct = decisionCorrect(action, strategy.action);
     const index = round.stage;
@@ -460,6 +465,7 @@
     el.trainFeedback.className = `feedback lir-message ${correct ? "correct" : "incorrect"}`;
 
     if (round.stage === 1) {
+      round.actionLockedUntil = performance.now() + DECISION_TRANSITION_LOCK_MS;
       round.stage = 2;
     } else {
       round.stage = 3;
@@ -609,6 +615,7 @@
     const c = state.challenge;
     const round = c.round;
     if (!c.active || !round || round.completed) return;
+    if (performance.now() < (round.actionLockedUntil || 0)) return;
     const strategy = strategyFor(round);
     const correct = decisionCorrect(action, strategy.action);
     if (action === "pull") round.actualActive[round.stage] = false;
@@ -616,6 +623,7 @@
     round.decisions.push({ stage: round.stage, action, optimal: strategy.action, reason: strategy.reason, cards: visibleCardsForStage(round) });
 
     if (round.stage === 1) {
+      round.actionLockedUntil = performance.now() + DECISION_TRANSITION_LOCK_MS;
       round.stage = 2;
       renderChallenge();
       return;

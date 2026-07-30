@@ -1065,3 +1065,34 @@ footer{color:var(--casa-muted)}
   .bet-column:nth-child(2){transform:translateY(2px)}
 }
 
+
+/* Let It Ride v13: centered, symmetric three-chip rail */
+.bet-grid{
+  width:min(374px,calc(100% - 20px));
+  gap:8px;
+  transform:none;
+}
+.bet-column:nth-child(1),
+.bet-column:nth-child(2),
+.bet-column:nth-child(3){transform:none}
+.bet-actions{gap:4px}
+.bet-actions button{width:96px}
+
+@media(max-width:520px){
+  .bet-grid{
+    width:min(340px,calc(100% - 10px));
+    gap:6px;
+    transform:none;
+  }
+  .bet-column:nth-child(1),
+  .bet-column:nth-child(2),
+  .bet-column:nth-child(3){transform:none}
+  .bet-actions{gap:4px}
+  .bet-actions button{width:68px}
+}
+
+@media(max-width:390px){
+  .bet-grid{width:min(326px,calc(100% - 8px));transform:none}
+  .bet-actions{gap:3px}
+  .bet-actions button{width:60px}
+}
