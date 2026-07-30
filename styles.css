@@ -996,12 +996,12 @@ footer{color:var(--casa-muted)}
 }
 
 
-/* Let It Ride v7: single-player casino-table geometry */
+/* Let It Ride v8: corrected single-player casino-table geometry */
 .lir-table{isolation:isolate}
 .lir-table-marking{
   position:absolute;
   inset:0;
-  z-index:0;
+  z-index:1;
   overflow:hidden;
   pointer-events:none;
 }
@@ -1011,7 +1011,7 @@ footer{color:var(--casa-muted)}
   height:100%;
 }
 .lir-table-marking .felt-wedge-fill{
-  fill:rgba(248,239,208,.018);
+  fill:rgba(248,239,208,.014);
   stroke:none;
 }
 .lir-table-marking .felt-wedge-line{
@@ -1034,32 +1034,34 @@ footer{color:var(--casa-muted)}
     0 6px 13px rgba(0,0,0,.26),
     inset 0 0 0 1px rgba(255,255,255,.28);
 }
-.community-zone .card.card-back{
-  border-color:#e9cc55;
-}
+.community-zone .card.card-back{border-color:#e9cc55}
 
-/* Let the three betting positions follow the slight diagonal of the wedge. */
-.bet-column:nth-child(1){transform:translate(-25px,15px)}
-.bet-column:nth-child(2){transform:translate(-3px,5px)}
-.bet-column:nth-child(3){transform:translate(17px,-3px)}
-
-@media(max-width:520px){
-  .lir-table-marking .felt-wedge-line{stroke-width:2.4}
-  .bet-column:nth-child(1){transform:translate(-8px,10px)}
-  .bet-column:nth-child(2){transform:translate(-1px,4px)}
-  .bet-column:nth-child(3){transform:translate(7px,-1px)}
+/* Shift the whole betting rail left, then give it a slight table-like rise. */
+.bet-grid{
+  transform:translateX(-22px);
 }
+.bet-column:nth-child(1){transform:translateY(9px)}
+.bet-column:nth-child(2){transform:translateY(4px)}
+.bet-column:nth-child(3){transform:translateY(0)}
 
-@media(max-width:390px){
-  .bet-column:nth-child(1){transform:translate(-4px,8px)}
-  .bet-column:nth-child(2){transform:translate(0,3px)}
-  .bet-column:nth-child(3){transform:translate(4px,0)}
-}
-/* Keep the felt marking above the felt background but below every control. */
-.lir-table-marking{z-index:1}
+/* Keep the felt marking below every card and control. */
 .lir-table>.lir-wordmark,
 .lir-table>.lir-topline,
 .lir-table>.lir-zone,
 .lir-table>.bet-grid,
 .lir-table>.lir-message,
 .lir-table>.table-hand-button{position:relative;z-index:2}
+
+@media(max-width:520px){
+  .lir-table-marking .felt-wedge-line{stroke-width:2.4}
+  .bet-grid{transform:translateX(-10px)}
+  .bet-column:nth-child(1){transform:translateY(6px)}
+  .bet-column:nth-child(2){transform:translateY(3px)}
+}
+
+@media(max-width:390px){
+  .bet-grid{transform:translateX(-4px)}
+  .bet-column:nth-child(1){transform:translateY(4px)}
+  .bet-column:nth-child(2){transform:translateY(2px)}
+}
+
