@@ -1212,3 +1212,63 @@ footer{color:var(--casa-muted)}
     font-size:.53rem;
   }
 }
+
+/* Let It Ride v18: pull the three-chip rail slightly closer to center.
+   The browser-measured alignment still anchors the middle chip beneath the
+   middle player card; only the equal spacing to the outer chips is reduced. */
+.bet-grid{
+  width:min(350px,calc(100% - 20px));
+  gap:6px;
+}
+
+@media(max-width:520px){
+  .bet-grid{
+    width:min(288px,calc(100% - 16px));
+    gap:3px;
+  }
+}
+
+@media(max-width:390px){
+  .bet-grid{
+    width:min(254px,calc(100% - 12px));
+    gap:2px;
+  }
+}
+
+@media(max-width:340px){
+  .bet-grid{
+    width:min(232px,calc(100% - 8px));
+    gap:1px;
+  }
+}
+
+/* Let It Ride v19: restore a more comfortable action-button width now that
+   the chip rail has been pulled inward. Keep progressively smaller fallbacks
+   for narrow phones so the complete labels remain on-screen. */
+.bet-actions button{
+  width:102px;
+}
+
+@media(max-width:520px){
+  .bet-actions button{
+    width:72px;
+    padding-inline:4px;
+    font-size:.64rem;
+  }
+}
+
+@media(max-width:390px){
+  .bet-actions button{
+    width:62px;
+    padding-inline:3px;
+    font-size:.59rem;
+  }
+}
+
+@media(max-width:340px){
+  .bet-actions button{
+    width:58px;
+    padding-inline:2px;
+    font-size:.56rem;
+  }
+}

@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v17
+# Casa del Jefe — Let It Ride Lounge v19
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -47,3 +47,15 @@ The active Pull Back and Let It Ride controls are raised above neighboring chip 
 
 - Tightened the three-chip rail at mobile widths while preserving exact center alignment beneath the middle player card.
 - Reduced the mobile action-button gap and width so the full Pull Back and Let It Ride controls remain inside the viewport, including on 320 px screens.
+
+## v18 update
+
+- Brought all three betting chips slightly closer to center.
+- Preserved exact alignment of the middle `2` chip beneath the middle player card.
+- Tightened mobile spacing further so the full decision controls remain on-screen.
+
+## v19 update
+
+- Widened the Pull Back and Let It Ride buttons after tightening the chip rail.
+- Preserved narrower responsive widths for small and very small phones.
+- Kept the middle chip anchored beneath the middle player card.
