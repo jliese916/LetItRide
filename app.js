@@ -28,6 +28,7 @@
 
     playBalance: $("#playBalance"),
     playAccuracy: $("#playAccuracy"),
+    playDecisionIndicator: $("#playDecisionIndicator"),
     playCommunity: $("#playCommunity"),
     playPlayer: $("#playPlayer"),
     playBets: $("#playBets"),
@@ -331,8 +332,27 @@
     if (tone === "win" || tone === "loss") el.playMessage.classList.add(tone);
   }
 
+  function clearPlayAccuracyIndicator() {
+    el.playDecisionIndicator.textContent = "";
+    el.playDecisionIndicator.className = "play-decision-indicator";
+    el.playDecisionIndicator.setAttribute("aria-label", "");
+  }
+
+  function flashPlayAccuracyIndicator(handCorrect) {
+    const symbol = handCorrect ? "+" : "−";
+    const resultClass = handCorrect ? "correct" : "incorrect";
+    const spokenText = handCorrect ? "Hand played accurately" : "Hand included an incorrect decision";
+
+    el.playDecisionIndicator.textContent = symbol;
+    el.playDecisionIndicator.setAttribute("aria-label", spokenText);
+    el.playDecisionIndicator.className = "play-decision-indicator";
+    void el.playDecisionIndicator.offsetWidth;
+    el.playDecisionIndicator.classList.add("visible", resultClass, "pulse");
+  }
+
   function startPlayHand() {
     if (state.play.round && !state.play.round.completed) return;
+    clearPlayAccuracyIndicator();
     const round = newRound();
     round.balanceBefore = state.play.balance;
     round.optimalBefore = state.play.optimalBalance;
@@ -405,7 +425,8 @@
     p.balance = roundTo(p.balance, 6);
     p.optimalBalance = roundTo(p.optimalBalance, 6);
     p.hands += 1;
-    if (round.correctness.every(Boolean)) p.accurateHands += 1;
+    const handCorrect = round.correctness.length === 2 && round.correctness.every(Boolean);
+    if (handCorrect) p.accurateHands += 1;
     p.balanceHistory.push(p.balance);
     p.optimalHistory.push(p.optimalBalance);
     round.completed = true;
@@ -416,6 +437,7 @@
       `${result.name}: ${sign}${formatUnits(net)} on the hand with ${actualActiveCount} bet${actualActiveCount === 1 ? "" : "s"} riding.`,
       net > 0 ? "win" : net < 0 ? "loss" : "neutral"
     );
+    flashPlayAccuracyIndicator(handCorrect);
     savePlay();
   }
 
@@ -818,6 +840,7 @@
   function resetPlay() {
     if (!window.confirm("Reset the bankroll, accuracy, chart, and incorrect-decision history?")) return;
     state.play = emptyPlay();
+    clearPlayAccuracyIndicator();
     savePlay();
     setPlayMessage("Press Deal to begin.");
     renderPlay();
