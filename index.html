@@ -12,7 +12,7 @@
 <link href="./manifest.webmanifest" rel="manifest"/>
 <link href="./favicon-64.png" rel="icon" type="image/png"/>
 <link href="./apple-touch-icon.png" rel="apple-touch-icon"/>
-<link href="./styles.css?v=29" rel="stylesheet"/>
+<link href="./styles.css?v=30" rel="stylesheet"/>
 </head>
 <body>
 <main class="app">
@@ -62,7 +62,7 @@
 <div aria-label="Play statistics" class="play-topline lir-topline">
 <div><small>Balance</small><strong id="playBalance">0 units</strong></div>
 <div class="play-accuracy-stat"><small>Accuracy</small><span class="play-accuracy-line"><strong id="playAccuracy">0.0%</strong><span aria-live="polite" class="play-decision-indicator" id="playDecisionIndicator"></span></span></div>
-<div><small>Initial bet</small><strong>3 units</strong></div>
+<div><small>Bet</small><strong>3 units</strong></div>
 </div>
 <div class="lir-zone community-zone">
 <div class="zone-label light">Community Cards</div>
@@ -87,8 +87,7 @@
 <details class="review-details session-review-list" id="playMistakesDetails"><summary>Incorrect decisions this session (<span id="playMistakeCount">0</span>)</summary><div class="play-missed-list" id="playMistakeList"></div></details>
 </section>
 </section>
-<section class="panel hidden" id="trainPanel">
-<p>Play the hand and test your strategy.</p>
+<section class="panel hidden train-panel" id="trainPanel">
 <div class="lir-table train-table">
 <div aria-hidden="true" class="lir-table-marking">
 <svg viewBox="0 0 650 560" preserveAspectRatio="none" focusable="false">
@@ -98,17 +97,15 @@
 <path class="felt-wedge-line" d="M546 210 L634 560" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
 </svg>
 </div>
+<div class="lir-wordmark"><span>TRAINING ROOM</span><small>PLAY THE HAND PERFECTLY</small></div>
+<div aria-label="Training statistics" class="train-score" id="trainScorePanel"><div><small>Hands</small><strong id="trainScore">0 / 0</strong></div><div><small>Accuracy</small><strong id="trainPercent">0.0%</strong></div></div>
 <div class="lir-zone community-zone"><div class="zone-label light">Community Cards</div><div class="hand" id="trainCommunity"></div></div>
 <div class="lir-zone player-zone"><div class="zone-label light">Player Cards</div><div class="hand" id="trainPlayer"></div></div>
 <div class="bet-grid" id="trainBets"></div>
 <div aria-live="polite" class="feedback lir-message" id="trainFeedback"></div>
 <button class="deal-button train-next-button table-hand-button" id="trainNew" type="button">New Hand</button>
 </div>
-<section class="score" id="trainScorePanel">
-<div><small>HANDS</small><strong id="trainScore">0 / 0</strong></div>
-<div><small>PERCENTAGE</small><strong id="trainPercent">0.0%</strong></div>
-<button class="link" id="resetTrain" type="button">Reset score</button>
-</section>
+<button class="link train-reset-link" id="resetTrain" type="button">Reset training score</button>
 </section>
 <section class="panel hidden" id="lookupPanel">
 <p>Enter the visible cards.</p>
@@ -247,7 +244,7 @@
 </section>
 <footer><a class="footer-link" href="https://jliese916.github.io/"><img alt="" aria-hidden="true" src="./jefe-crest.svg"/>Return to Casa del Jefe</a></footer>
 </main>
-<script src="./strategy-engine.js?v=29"></script>
-<script defer="" src="./app.js?v=29"></script>
+<script src="./strategy-engine.js?v=30"></script>
+<script defer="" src="./app.js?v=30"></script>
 </body>
 </html>

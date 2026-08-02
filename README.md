@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v29
+# Casa del Jefe — Let It Ride Lounge v30
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -119,3 +119,11 @@ Restored the Play accuracy feedback indicator. After each completed hand, a gree
 
 - Reserved a stable vertical-scrollbar gutter so Play, Train, and Look Up remain on the exact same horizontal centerline when switching modes.
 - Advanced cache-busting asset URLs and the service-worker cache to v29.
+
+
+## v30 update
+
+- Standardized Play statistics as Balance / Accuracy / Bet.
+- Moved Train statistics to the top of the felt as Hands / Accuracy.
+- Added the shared Training Room wordmark and retained the Casa del Jefe Hall of Masters Grand Master certificate.
+- Advanced cache-busting asset URLs and the service-worker cache to v30.
