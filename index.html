@@ -12,7 +12,7 @@
 <link href="./manifest.webmanifest" rel="manifest"/>
 <link href="./favicon-64.png" rel="icon" type="image/png"/>
 <link href="./apple-touch-icon.png" rel="apple-touch-icon"/>
-<link href="./styles.css?v=30" rel="stylesheet"/>
+<link href="./styles.css?v=32" rel="stylesheet"/>
 </head>
 <body>
 <main class="app">
@@ -58,7 +58,7 @@
 <path class="felt-wedge-line" d="M546 210 L634 560" fill="none" stroke="#f8efd0" stroke-opacity="0.42" stroke-width="3" stroke-linecap="round"></path>
 </svg>
 </div>
-<div class="lir-wordmark"><span>CASA DEL JEFE</span><small>LET IT RIDE LOUNGE</small></div>
+<div class="lir-wordmark"><span>CASA DEL JEFE</span><small>LET IT RIDE</small></div>
 <div aria-label="Play statistics" class="play-topline lir-topline">
 <div><small>Balance</small><strong id="playBalance">0 units</strong></div>
 <div class="play-accuracy-stat"><small>Accuracy</small><span class="play-accuracy-line"><strong id="playAccuracy">0.0%</strong><span aria-live="polite" class="play-decision-indicator" id="playDecisionIndicator"></span></span></div>
@@ -76,15 +76,21 @@
 <div aria-live="polite" class="play-message lir-message" id="playMessage">Press Deal to begin.</div>
 <button class="deal-button table-hand-button" id="playDeal" type="button">Deal</button>
 </div>
-<section class="balance-chart-card">
-<div class="balance-chart-heading"><span>Bankroll history</span><small id="playChartSummary">0 completed hands</small></div>
-<div class="balance-chart-legend"><span><i class="legend-line legend-actual"></i>Your play</span><span><i class="legend-line legend-optimal"></i>Optimal play</span></div>
-<div class="chart-delta-pill" id="playDeltaSummary">Optimal − you: 0 units</div>
-<canvas aria-label="Line chart comparing your balance with optimal play" class="balance-chart" id="playBalanceChart" role="img"></canvas>
+<section class="balance-card">
+<div class="balance-heading"><span>BANKROLL HISTORY</span></div>
+<div class="chart-legend" aria-hidden="true"><span><i class="legend-line legend-actual"></i>Your play</span><span><i class="legend-line legend-optimal"></i>Optimal play</span></div>
+<div class="chart-pill" id="playDeltaSummary">Optimal − you: 0</div>
+<canvas aria-label="Line chart comparing your bankroll with optimal play using the same hands" class="balance-chart" id="playBalanceChart" role="img"></canvas>
 </section>
 <section aria-label="Session review and controls" class="session-hub">
-<div class="session-hub-heading"><div><strong>Session review</strong><small>Review every incorrect decision from this session.</small></div><button class="danger-link session-reset-button" id="resetPlay" type="button">Reset session</button></div>
-<details class="review-details session-review-list" id="playMistakesDetails"><summary>Incorrect decisions this session (<span id="playMistakeCount">0</span>)</summary><div class="play-missed-list" id="playMistakeList"></div></details>
+<div class="session-heading"><strong>SESSION REVIEW</strong><button class="danger-link session-reset-button" id="resetPlay" type="button">Reset session</button></div>
+<div class="session-stats">
+<div><small>Hands</small><strong id="completedHands">0</strong></div>
+<div><small>Wins</small><strong id="playWins">0</strong></div>
+<div><small>Pushes</small><strong id="playPushes">0</strong></div>
+<div><small>Losses</small><strong id="playLosses">0</strong></div>
+</div>
+<details class="review-details session-review-list mistake-review" id="playMistakesDetails"><summary>Incorrect decisions this session (<span id="playMistakeCount">0</span>)</summary><div class="play-missed-list mistake-list" id="playMistakeList"></div></details>
 </section>
 </section>
 <section class="panel hidden train-panel" id="trainPanel">
@@ -242,9 +248,17 @@
 </div>
 <div class="hidden" id="challengeSummary"></div>
 </section>
-<footer><a class="footer-link" href="https://jliese916.github.io/"><img alt="" aria-hidden="true" src="./jefe-crest.svg"/>Return to Casa del Jefe</a></footer>
+<footer>
+<div class="footer-actions">
+<a class="footer-link" href="https://jliese916.github.io/"><img alt="" aria-hidden="true" src="./jefe-crest.svg"/>Return to Casa del Jefe</a>
+<div class="update-notice hidden" id="updateNotice" role="status" aria-live="polite">
+<span>A new version of Let It Ride is ready.</span>
+<button class="update-button" id="reloadUpdate" type="button">Reload Now</button>
+</div>
+</div>
+</footer>
 </main>
-<script src="./strategy-engine.js?v=30"></script>
-<script defer="" src="./app.js?v=30"></script>
+<script src="./strategy-engine.js?v=32"></script>
+<script defer="" src="./app.js?v=32"></script>
 </body>
 </html>

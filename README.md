@@ -1,4 +1,4 @@
-# Casa del Jefe — Let It Ride Lounge v30
+# Casa del Jefe — Let It Ride Lounge v32
 
 A self-contained browser trainer for the standard Let It Ride paytable:
 1000 / 200 / 50 / 11 / 8 / 5 / 3 / 2 / 1 for royal flush through pair of tens or better.
@@ -127,3 +127,20 @@ Restored the Play accuracy feedback indicator. After each completed hand, a gree
 - Moved Train statistics to the top of the felt as Hands / Accuracy.
 - Added the shared Training Room wordmark and retained the Casa del Jefe Hall of Masters Grand Master certificate.
 - Advanced cache-busting asset URLs and the service-worker cache to v30.
+
+
+## v32 update
+
+- Allows vertical page scrolling when a touch gesture begins over the bankroll chart.
+- Uses a single scheduled chart redraw and skips redundant canvas reallocations.
+- Registers the service worker after the page is loaded and idle.
+- Lets a ready update wait without interrupting an active hand.
+- Adds a footer notice with **Reload Now** when a newer version is ready.
+- Uses cache-first repeat loading while quietly refreshing the cached app shell.
+
+
+## v32 consistency update
+- Standardized Bankroll History and Session Review to the Casa del Jefe trainer model.
+- Added Wins, Pushes, and Losses with saved-session migration.
+- Corrected chart draw order, accuracy alignment, mobile scrolling, and update version detection.
+- Updated the felt wordmark to LET IT RIDE.

@@ -1,6 +1,7 @@
 "use strict";
 
 (() => {
+  const APP_VERSION = "32";
   const S = window.LetItRideStrategy;
   if (!S) throw new Error("LetItRideStrategy did not load.");
 
@@ -35,8 +36,11 @@
     playMessage: $("#playMessage"),
     playDeal: $("#playDeal"),
     playChart: $("#playBalanceChart"),
-    playChartSummary: $("#playChartSummary"),
     playDeltaSummary: $("#playDeltaSummary"),
+    completedHands: $("#completedHands"),
+    playWins: $("#playWins"),
+    playPushes: $("#playPushes"),
+    playLosses: $("#playLosses"),
     playMistakeCount: $("#playMistakeCount"),
     playMistakeList: $("#playMistakeList"),
     resetPlay: $("#resetPlay"),
@@ -57,7 +61,9 @@
     suitPicker: $("#suitPicker"),
     clearLookup: $("#clearLookup"),
     findStrategy: $("#findStrategy"),
-    lookupFeedback: $("#lookupFeedback")
+    lookupFeedback: $("#lookupFeedback"),
+    updateNotice: $("#updateNotice"),
+    reloadUpdate: $("#reloadUpdate")
   };
 
   const state = {
@@ -68,6 +74,9 @@
     challenge: { active: false, number: 0, correct: 0, round: null, misses: [] }
   };
 
+  let balanceChartFrame = 0;
+  let lastBalanceChartSignature = "";
+
   function emptyPlay() {
     return {
       balance: 0,
@@ -76,23 +85,49 @@
       optimalHistory: [0],
       hands: 0,
       accurateHands: 0,
+      wins: 0,
+      pushes: 0,
+      losses: 0,
       mistakes: [],
       round: null
     };
+  }
+
+  function countOutcomesFromHistory(history, hands) {
+    const values = Array.isArray(history) ? history.map(Number).filter(Number.isFinite) : [];
+    const count = Math.min(Math.max(0, Number(hands) || 0), Math.max(0, values.length - 1));
+    let wins = 0;
+    let pushes = 0;
+    let losses = 0;
+    for (let index = 1; index <= count; index += 1) {
+      const change = values[index] - values[index - 1];
+      if (change > 1e-9) wins += 1;
+      else if (change < -1e-9) losses += 1;
+      else pushes += 1;
+    }
+    return { wins, pushes, losses };
   }
 
   function loadPlay() {
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (!saved || typeof saved !== "object") return emptyPlay();
+      const balanceHistory = Array.isArray(saved.balanceHistory) && saved.balanceHistory.length ? saved.balanceHistory.map(Number) : [0];
+      const optimalHistory = Array.isArray(saved.optimalHistory) && saved.optimalHistory.length ? saved.optimalHistory.map(Number) : [0];
+      const hands = Number(saved.hands) || 0;
+      const migratedOutcomes = countOutcomesFromHistory(balanceHistory, hands);
+      const hasSavedOutcomes = [saved.wins, saved.pushes, saved.losses].every(value => Number.isFinite(Number(value)));
       return {
         ...emptyPlay(),
         balance: Number(saved.balance) || 0,
         optimalBalance: Number(saved.optimalBalance) || 0,
-        balanceHistory: Array.isArray(saved.balanceHistory) && saved.balanceHistory.length ? saved.balanceHistory : [0],
-        optimalHistory: Array.isArray(saved.optimalHistory) && saved.optimalHistory.length ? saved.optimalHistory : [0],
-        hands: Number(saved.hands) || 0,
+        balanceHistory,
+        optimalHistory,
+        hands,
         accurateHands: Number(saved.accurateHands) || 0,
+        wins: hasSavedOutcomes ? Number(saved.wins) : migratedOutcomes.wins,
+        pushes: hasSavedOutcomes ? Number(saved.pushes) : migratedOutcomes.pushes,
+        losses: hasSavedOutcomes ? Number(saved.losses) : migratedOutcomes.losses,
         mistakes: Array.isArray(saved.mistakes) ? saved.mistakes.slice(-100) : []
       };
     } catch (error) {
@@ -111,6 +146,9 @@
         optimalHistory: p.optimalHistory,
         hands: p.hands,
         accurateHands: p.accurateHands,
+        wins: p.wins,
+        pushes: p.pushes,
+        losses: p.losses,
         mistakes: p.mistakes
       }));
     } catch (error) {
@@ -432,6 +470,9 @@
     round.completed = true;
 
     const net = roundTo(p.balance - round.balanceBefore, 6);
+    if (net > 1e-9) p.wins += 1;
+    else if (net < -1e-9) p.losses += 1;
+    else p.pushes += 1;
     const sign = net > 0 ? "+" : "";
     setPlayMessage(
       `${result.name}: ${sign}${formatUnits(net)} on the hand with ${actualActiveCount} bet${actualActiveCount === 1 ? "" : "s"} riding.`,
@@ -451,11 +492,16 @@
     el.playAccuracy.textContent = p.hands ? `${(100 * p.accurateHands / p.hands).toFixed(1)}%` : "0.0%";
     el.playDeal.disabled = Boolean(p.round && !p.round.completed);
     el.playDeal.textContent = p.round && p.round.completed ? "New Hand" : "Deal";
-    el.playChartSummary.textContent = `${p.hands} completed hand${p.hands === 1 ? "" : "s"}`;
+    el.completedHands.textContent = String(p.hands);
+    el.playWins.textContent = String(p.wins);
+    el.playPushes.textContent = String(p.pushes);
+    el.playLosses.textContent = String(p.losses);
     const delta = roundTo(p.optimalBalance - p.balance, 6);
-    el.playDeltaSummary.textContent = `Optimal − you: ${formatUnits(delta)}`;
+    el.playDeltaSummary.textContent = `Optimal − you: ${deltaLabel(delta)}`;
+    el.playDeltaSummary.classList.toggle("behind", delta > 0);
+    el.playDeltaSummary.classList.toggle("ahead", delta < 0);
     renderMistakes();
-    drawBalanceChart();
+    scheduleBalanceChartDraw();
   }
 
   function renderMistakes() {
@@ -485,57 +531,100 @@
     });
   }
 
+  function scheduleBalanceChartDraw() {
+    if (balanceChartFrame) return;
+    balanceChartFrame = window.requestAnimationFrame(() => {
+      balanceChartFrame = 0;
+      drawBalanceChart();
+    });
+  }
+
   function drawBalanceChart() {
     const canvas = el.playChart;
+    if (!canvas || canvas.offsetParent === null) return;
     const rect = canvas.getBoundingClientRect();
-    const ratio = window.devicePixelRatio || 1;
-    const width = Math.max(300, Math.round(rect.width || 600));
-    const height = 230;
-    canvas.width = width * ratio;
-    canvas.height = height * ratio;
-    canvas.style.height = `${height}px`;
+    if (rect.width <= 0 || rect.height <= 0) return;
+    const dpr = window.devicePixelRatio || 1;
+    const width = Math.max(280, rect.width);
+    const height = Math.max(150, rect.height);
+    const pixelWidth = Math.round(width * dpr);
+    const pixelHeight = Math.round(height * dpr);
+    const actualValues = state.play.balanceHistory.length ? state.play.balanceHistory : [0];
+    const optimalValues = state.play.optimalHistory.length ? state.play.optimalHistory : [0];
+    const signature = `${pixelWidth}x${pixelHeight}:${state.play.hands}:${state.play.balance}:${state.play.optimalBalance}:${actualValues.length}:${optimalValues.length}`;
+    if (signature === lastBalanceChartSignature) return;
+    lastBalanceChartSignature = signature;
+    if (canvas.width !== pixelWidth) canvas.width = pixelWidth;
+    if (canvas.height !== pixelHeight) canvas.height = pixelHeight;
     const ctx = canvas.getContext("2d");
-    ctx.scale(ratio, ratio);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, width, height);
-
-    const actual = state.play.balanceHistory;
-    const optimal = state.play.optimalHistory;
-    const values = [...actual, ...optimal, 0];
-    let min = Math.min(...values);
-    let max = Math.max(...values);
-    if (min === max) { min -= 1; max += 1; }
-    const pad = { left: 38, right: 12, top: 14, bottom: 26 };
-    const graphW = width - pad.left - pad.right;
-    const graphH = height - pad.top - pad.bottom;
-    const maxCount = Math.max(actual.length, optimal.length, 2);
-    const x = i => pad.left + (i / (maxCount - 1)) * graphW;
-    const y = value => pad.top + (max - value) / (max - min) * graphH;
-
-    ctx.strokeStyle = "rgba(60,75,68,.18)";
-    ctx.lineWidth = 1;
+    const allValues = [...actualValues, ...optimalValues];
+    const pointCount = Math.max(actualValues.length, optimalValues.length);
+    const min = Math.min(0, ...allValues);
+    const max = Math.max(0, ...allValues);
+    const spread = Math.max(4, max - min);
+    const low = min - spread * .18;
+    const high = max + spread * .18;
+    const left = 40, right = 12, top = 12, bottom = 12;
+    const xAt = index => left + (pointCount === 1 ? 0 : index / (pointCount - 1) * (width - left - right));
+    const yAt = value => top + (high - value) / (high - low || 1) * (height - top - bottom);
+    ctx.font = "11px system-ui, sans-serif";
+    ctx.fillStyle = "rgba(232,226,207,.72)";
+    ctx.strokeStyle = "rgba(232,226,207,.14)";
     for (let i = 0; i <= 4; i += 1) {
-      const yy = pad.top + i * graphH / 4;
-      ctx.beginPath(); ctx.moveTo(pad.left, yy); ctx.lineTo(width - pad.right, yy); ctx.stroke();
+      const value = high - (high - low) * i / 4;
+      const y = yAt(value);
+      ctx.beginPath(); ctx.moveTo(left, y); ctx.lineTo(width - right, y); ctx.stroke();
+      ctx.fillText(String(Math.round(value)), 6, y + 4);
     }
-    ctx.fillStyle = "#617168";
-    ctx.font = "11px system-ui";
-    ctx.textAlign = "right";
-    ctx.fillText(formatNumber(max), pad.left - 5, pad.top + 4);
-    ctx.fillText(formatNumber(min), pad.left - 5, pad.top + graphH);
+    const zeroY = yAt(0);
+    ctx.save();
+    ctx.strokeStyle = "rgba(231,200,106,.4)";
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath(); ctx.moveTo(left, zeroY); ctx.lineTo(width - right, zeroY); ctx.stroke();
+    ctx.restore();
 
-    function line(series, strokeStyle, dashed) {
-      if (!series.length) return;
-      ctx.save();
-      ctx.strokeStyle = strokeStyle;
-      ctx.lineWidth = 2.5;
-      ctx.setLineDash(dashed ? [6, 5] : []);
+    const buildPath = values => {
       ctx.beginPath();
-      series.forEach((value, i) => i ? ctx.lineTo(x(i), y(value)) : ctx.moveTo(x(i), y(value)));
+      values.forEach((value, index) => index ? ctx.lineTo(xAt(index), yAt(value)) : ctx.moveTo(xAt(index), yAt(value)));
+    };
+
+    // Draw optimal first so Your play remains visible whenever the lines overlap.
+    if (optimalValues.length > 1) {
+      buildPath(optimalValues);
+      ctx.strokeStyle = "#e7c86a";
+      ctx.lineWidth = 2.25;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
       ctx.stroke();
-      ctx.restore();
     }
-    line(actual, "#174a35", false);
-    line(optimal, "#9a7213", true);
+
+    if (actualValues.length > 1) {
+      const drawClippedLine = (clipTop, clipBottom, color) => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, clipTop, width, Math.max(0, clipBottom - clipTop));
+        ctx.clip();
+        buildPath(actualValues);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 3;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.stroke();
+        ctx.restore();
+      };
+      drawClippedLine(0, zeroY, "#4ccf79");
+      drawClippedLine(zeroY, height, "#ff6b6b");
+    }
+
+    const actualLast = actualValues[actualValues.length - 1];
+    const optimalLast = optimalValues[optimalValues.length - 1];
+    ctx.fillStyle = "#e7c86a";
+    ctx.beginPath(); ctx.arc(xAt(optimalValues.length - 1), yAt(optimalLast), 3.5, 0, Math.PI * 2); ctx.fill();
+    ctx.fillStyle = actualLast >= 0 ? "#4ccf79" : "#ff6b6b";
+    ctx.beginPath(); ctx.arc(xAt(actualValues.length - 1), yAt(actualLast), 4, 0, Math.PI * 2); ctx.fill();
+    canvas.setAttribute("aria-label", `Line chart comparing your bankroll with optimal play. Current optimal-minus-you difference: ${deltaLabel(optimalLast - actualLast)}.`);
   }
 
   function startTrainHand() {
@@ -833,7 +922,7 @@
     Object.entries(el.panels).forEach(([name, panel]) => panel.classList.toggle("hidden", name !== mode));
     if (mode === "train" && !state.train.round) startTrainHand();
     if (mode === "lookup") renderLookup();
-    if (mode === "play") requestAnimationFrame(drawBalanceChart);
+    if (mode === "play") scheduleBalanceChartDraw();
     requestAnimationFrame(alignAllBetGrids);
   }
 
@@ -852,7 +941,14 @@
   }
 
   function formatNumber(value) {
-    return Number.isInteger(value) ? String(value) : value.toFixed(1);
+    const rounded = roundTo(Number(value), 6);
+    return Number.isInteger(rounded) ? String(rounded) : String(rounded);
+  }
+
+  function deltaLabel(value) {
+    const rounded = roundTo(Number(value), 6);
+    if (rounded === 0) return "0";
+    return `${rounded > 0 ? "+" : "−"}${formatNumber(Math.abs(rounded))}`;
   }
 
   function formatUnits(value) {
@@ -893,7 +989,6 @@
   el.findStrategy.addEventListener("click", findLookupStrategy);
   el.challengeLaunch.addEventListener("click", startChallenge);
   el.challengeExit.addEventListener("click", exitChallenge);
-  window.addEventListener("resize", () => requestAnimationFrame(drawBalanceChart));
   window.addEventListener("keydown", event => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) return;
 
@@ -932,7 +1027,146 @@
   renderTrain();
   setMode("play");
 
-  if ("serviceWorker" in navigator && location.protocol !== "file:") {
-    navigator.serviceWorker.register("./service-worker.js").catch(error => console.warn("Service worker registration failed.", error));
+  if ("ResizeObserver" in window && el.playChart) {
+    new ResizeObserver(() => {
+      if (state.mode === "play") scheduleBalanceChartDraw();
+    }).observe(el.playChart);
+  } else {
+    window.addEventListener("resize", () => {
+      if (state.mode === "play") scheduleBalanceChartDraw();
+    }, { passive: true });
   }
+
+  if ("serviceWorker" in navigator && location.protocol !== "file:") {
+    let waitingWorker = null;
+    let waitingRegistration = null;
+    let reloadingForUpdate = false;
+
+    const hideUpdateNotice = () => {
+      waitingWorker = null;
+      waitingRegistration = null;
+      if (el.updateNotice) el.updateNotice.classList.add("hidden");
+      if (el.reloadUpdate) {
+        el.reloadUpdate.disabled = false;
+        el.reloadUpdate.textContent = "Reload Now";
+      }
+    };
+
+    const workerVersion = worker => new Promise(resolve => {
+      if (!worker) {
+        resolve(null);
+        return;
+      }
+      const channel = new MessageChannel();
+      let settled = false;
+      const finish = value => {
+        if (settled) return;
+        settled = true;
+        window.clearTimeout(timer);
+        resolve(value ? String(value) : null);
+      };
+      const timer = window.setTimeout(() => finish(null), 1200);
+      channel.port1.onmessage = event => finish(event.data && event.data.version);
+      try {
+        worker.postMessage({ type: "GET_VERSION" }, [channel.port2]);
+      } catch {
+        finish(null);
+      }
+    });
+
+    const numericVersion = value => {
+      const parsed = Number.parseInt(String(value || "").replace(/\D+/g, ""), 10);
+      return Number.isFinite(parsed) ? parsed : null;
+    };
+
+    const considerWaitingWorker = async (registration, worker) => {
+      if (!worker || worker.state !== "installed") return;
+      const version = await workerVersion(worker);
+      const pageVersion = numericVersion(APP_VERSION);
+      const candidateVersion = numericVersion(version);
+
+      if (candidateVersion === pageVersion) {
+        hideUpdateNotice();
+        worker.postMessage({ type: "SKIP_WAITING" });
+        return;
+      }
+
+      if (candidateVersion === null || (pageVersion !== null && candidateVersion < pageVersion)) {
+        hideUpdateNotice();
+        return;
+      }
+
+      if (!navigator.serviceWorker.controller || !el.updateNotice) return;
+      waitingWorker = worker;
+      waitingRegistration = registration;
+      el.updateNotice.classList.remove("hidden");
+    };
+
+    const watchedWorkers = new WeakSet();
+    const watchWorker = (registration, worker) => {
+      if (!worker || watchedWorkers.has(worker)) return;
+      watchedWorkers.add(worker);
+      const checkState = () => {
+        if (worker.state === "installed") {
+          considerWaitingWorker(registration, registration.waiting || worker);
+        }
+      };
+      worker.addEventListener("statechange", checkState);
+      checkState();
+    };
+
+    const watchRegistration = registration => {
+      if (registration.waiting) considerWaitingWorker(registration, registration.waiting);
+      watchWorker(registration, registration.installing);
+      registration.addEventListener("updatefound", () => watchWorker(registration, registration.installing));
+    };
+
+    const registerServiceWorker = async () => {
+      try {
+        const registration = await navigator.serviceWorker.register(`./service-worker.js?v=${APP_VERSION}`, { updateViaCache: "none" });
+        watchRegistration(registration);
+        registration.update().catch(() => {});
+      } catch (error) {
+        console.warn("Could not register the Let It Ride service worker.", error);
+      }
+    };
+
+    if (el.reloadUpdate) {
+      el.reloadUpdate.addEventListener("click", () => {
+        const worker = (waitingRegistration && waitingRegistration.waiting) || waitingWorker;
+        el.reloadUpdate.disabled = true;
+        el.reloadUpdate.textContent = "Reloading…";
+
+        if (!worker) {
+          window.location.reload();
+          return;
+        }
+
+        const reloadOnce = () => {
+          if (reloadingForUpdate) return;
+          reloadingForUpdate = true;
+          window.location.reload();
+        };
+
+        navigator.serviceWorker.addEventListener("controllerchange", reloadOnce, { once: true });
+        worker.addEventListener("statechange", () => {
+          if (worker.state === "activated") reloadOnce();
+        });
+
+        try {
+          worker.postMessage({ type: "SKIP_WAITING" });
+        } catch {
+          reloadOnce();
+          return;
+        }
+        window.setTimeout(reloadOnce, 2500);
+      });
+    }
+
+    window.addEventListener("load", () => {
+      if ("requestIdleCallback" in window) window.requestIdleCallback(registerServiceWorker, { timeout: 2500 });
+      else window.setTimeout(registerServiceWorker, 750);
+    }, { once: true });
+  }
+
 })();
